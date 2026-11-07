@@ -1,3 +1,7 @@
+This repository contains both source code and creative content (blog posts, articles, images). Different licenses apply to each part of the project as detailed below.
+
+## 1. Code License (MIT)
+
 MIT License
 
 Copyright (c) 2026 f4n74z14
@@ -19,3 +23,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## 2. Content License (CC BY 4.0)
+
+Unless otherwise specified, all prose, articles, blog posts, documentation, and media assets (images, graphics) in this repository are licensed under the **Creative Commons Attribution 4.0 International License (CC BY 4.0)**.
+
+You are free to:
+- **Share** — copy and redistribute the material in any medium or format.
+- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially.
+
+Under the following terms:
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+
+To view a copy of this license, visit: https://creativecommons.org/licenses/by/4.0/
