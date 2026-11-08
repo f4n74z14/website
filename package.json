@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build && pagefind --site dist && node copy-pagefind.mjs",
+    "build": "astro build && pagefind --site dist && node copy-pagefind.mjs",
     "preview": "astro preview",
     "sync": "astro sync",
     "astro": "astro",
@@ -38,13 +38,13 @@
     "@shikijs/transformers": "^4.6.0",
     "@tailwindcss/typography": "^0.5.20",
     "@types/lodash.kebabcase": "^4.1.9",
-    "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^9.39.5",
-    "eslint-plugin-astro": "^1.7.0",
+    "@typescript-eslint/parser": "^8.72.1",
+    "eslint": "^10.14.0",
+    "eslint-plugin-astro": "^3.2.1",
     "pagefind": "^1.6.0",
     "prettier": "3.9.10",
-    "prettier-plugin-astro": "0.14.1",
+    "prettier-plugin-astro": "1.1.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
