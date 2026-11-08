@@ -37,7 +37,7 @@ export default {
   },
   footer: {
     copyright: "Copyright",
-    license: "Creative Commons Attribution 4.0 International License (CC BY 4.0)",
+    license: "CC BY 4.0",
   },
   pages: {
     tagTitle: "Tag",
