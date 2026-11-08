@@ -1,0 +1,114 @@
+/* Register nord color palette */
+:root {
+  /* Polar Night */
+  --nord-0: #2e3440;
+  --nord-1: #3b4252;
+  --nord-2: #434c5e;
+  --nord-3: #4c566a;
+
+  /* Snow Storm */
+  --nord-4: #d8dee9;
+  --nord-5: #e5e9f0;
+  --nord-6: #eceff4;
+
+  /* Frost */
+  --nord-7: #8fbcbb;
+  --nord-8: #88c0d0;
+  --nord-9: #81a1c1;
+  --nord-10: #5e81ac;
+
+  /* Aurora */
+  --nord-11: #bf616a;
+  --nord-12: #d08770;
+  --nord-13: #ebcb8b;
+  --nord-14: #a3be8c;
+  --nord-15: #b48ead;
+}
+
+/* Register design tokens for Tailwind v4 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --font-app: var(--font-google-sans-code);
+}
+
+/* Light theme values */
+:root,
+[data-theme="light"] {
+  --background: var(--nord-6);
+  --foreground: var(--nord-0);
+  --accent: var(--nord-10);
+  --accent-foreground: var(--nord-6);
+  --muted: var(--nord-5);
+  --muted-foreground: var(--nord-3);
+  --border: var(--nord-4);
+}
+
+/* Dark theme values */
+[data-theme="dark"] {
+  --background: var(--nord-0);
+  --foreground: var(--nord-4);
+  --accent: var(--nord-8);
+  --accent-foreground: var(--nord-0);
+  --muted: var(--nord-2);
+  --muted-foreground: var(--nord-4);
+  --border: var(--nord-3);
+}
+
+
+/* ==========================================
+    NORD CALLOUTS — rehype-callouts 2.2.0
+    ========================================== */
+
+:root {
+    /* Default callout colors */
+    --callout-note-color-light: var(--nord-10);
+    --callout-abstract-color-light: var(--nord-15);
+    --callout-info-color-light: var(--nord-8);
+    --callout-todo-color-light: var(--nord-9);
+
+    --callout-tip-color-light: var(--nord-14);
+    --callout-success-color-light: var(--nord-14);
+    --callout-question-color-light: var(--nord-7);
+
+    --callout-warning-color-light: var(--nord-13);
+    --callout-failure-color-light: var(--nord-11);
+    --callout-danger-color-light: var(--nord-11);
+    --callout-bug-color-light: var(--nord-11);
+
+    --callout-example-color-light: var(--nord-15);
+    --callout-quote-color-light: var(--nord-3);
+}
+
+.dark {
+    --callout-note-color-dark: var(--nord-9);
+    --callout-abstract-color-dark: var(--nord-15);
+    --callout-info-color-dark: var(--nord-8);
+    --callout-todo-color-dark: var(--nord-9);
+
+    --callout-tip-color-dark: var(--nord-14);
+    --callout-success-color-dark: var(--nord-14);
+    --callout-question-color-dark: var(--nord-7);
+
+    --callout-warning-color-dark: var(--nord-13);
+    --callout-failure-color-dark: var(--nord-11);
+    --callout-danger-color-dark: var(--nord-11);
+    --callout-bug-color-dark: var(--nord-11);
+
+    --callout-example-color-dark: var(--nord-15);
+    --callout-quote-color-dark: var(--nord-4);
+}
+
+/* ==========================================
+    CUSTOM CALLOUT TYPES
+    ========================================== */
+
+[data-callout="custom"] {
+    --rc-color-light: var(--nord-15);
+    --rc-color-dark: var(--nord-15);
+}
