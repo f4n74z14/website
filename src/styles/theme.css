@@ -35,6 +35,24 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --font-app: var(--font-google-sans-code);
+
+  /* Nord Palette */
+  --color-nord-0: var(--nord-0);
+  --color-nord-1: var(--nord-1);
+  --color-nord-2: var(--nord-2);
+  --color-nord-3: var(--nord-3);
+  --color-nord-4: var(--nord-4);
+  --color-nord-5: var(--nord-5);
+  --color-nord-6: var(--nord-6);
+  --color-nord-7: var(--nord-7);
+  --color-nord-8: var(--nord-8);
+  --color-nord-9: var(--nord-9);
+  --color-nord-10: var(--nord-10);
+  --color-nord-11: var(--nord-11);
+  --color-nord-12: var(--nord-12);
+  --color-nord-13: var(--nord-13);
+  --color-nord-14: var(--nord-14);
+  --color-nord-15: var(--nord-15);
 }
 
 /* Light theme values */

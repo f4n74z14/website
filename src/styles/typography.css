@@ -131,13 +131,13 @@
   /* https://shiki.style/packages/transformers */
   .astro-code {
     .line.diff.add {
-      @apply relative inline-block w-full bg-green-400/20 before:absolute before:-left-3 before:text-green-500 before:content-['+'];
+      @apply relative inline-block w-full bg-nord-14/20 before:absolute before:-left-3 before:text-nord-14 before:content-['+'];
     }
     .line.diff.remove {
-      @apply relative inline-block w-full bg-red-500/20 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
+      @apply relative inline-block w-full bg-nord-11/20 before:absolute before:-left-3 before:text-nord-11 before:content-['-'];
     }
     .line.highlighted {
-      @apply inline-block w-full bg-slate-400/20;
+      @apply inline-block w-full bg-nord-3/30;
     }
     .highlighted-word {
       @apply border-border rounded-sm border px-0.5 py-px;
