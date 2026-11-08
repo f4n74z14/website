@@ -10,7 +10,15 @@ tags:
   - games
 description: Какие вопросы стоит задать? Почему не стоит стыдиться читов?
 ---
-![Сложный выбор](@/assets/images/tough-choice.webp)
+import { Image } from "astro:assets";
+import toughChoice from "@/assets/images/tough-choice.webp";
+
+<Image 
+  src={toughChoice} 
+  alt="Сложный выбор" 
+  loading="eager" 
+  fetchpriority="high" 
+/>
 
 ## Введение в сложность
 Мне казалось, что проблема выбора уровня сложности в играх давно решена, играй как хочешь! 
