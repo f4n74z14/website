@@ -9,6 +9,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { rehypeHeadingIds, unified } from "@astrojs/markdown-remark";
 import rehypeCallouts from "rehype-callouts";
+import rehypeExternalLinks from 'rehype-external-links';
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -49,6 +50,13 @@ export default defineConfig({
         rehypeInlineToc,
         rehypeCallouts,
         rehypeTableWrapper,
+        [
+          rehypeExternalLinks,
+          {
+            target: "_blank",
+            rel: ["nofollow", "noopener", "noreferrer"],
+          },
+        ],
       ],
     }),
     shikiConfig: {
