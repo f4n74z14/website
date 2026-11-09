@@ -1,0 +1,22 @@
+/wp-config.php https://www.youtube.com/watch?v=qWNQUvIk954 302
+/wp-content/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/wp-includes/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/xmlrpc.php https://www.youtube.com/watch?v=qWNQUvIk954 302
+
+/.env* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/.git/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/config.json https://www.youtube.com/watch?v=qWNQUvIk954 302
+/secrets.env https://www.youtube.com/watch?v=qWNQUvIk954 302
+
+/admin/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/phpmyadmin/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/pma/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/dashboard/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+
+/backup.zip https://www.youtube.com/watch?v=qWNQUvIk954 302
+/dump.sql https://www.youtube.com/watch?v=qWNQUvIk954 302
+/site.tar.gz https://www.youtube.com/watch?v=qWNQUvIk954 302
+
+/actuator/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/vendor/* https://www.youtube.com/watch?v=qWNQUvIk954 302
+/laravel/* https://www.youtube.com/watch?v=qWNQUvIk954 302
