@@ -34,7 +34,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: var(--font-google-sans-code);
+  --font-app: Helvetica, Arial, sans-serif;
 
   /* Nord Palette */
   --color-nord-0: var(--nord-0);

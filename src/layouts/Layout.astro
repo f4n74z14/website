@@ -38,12 +38,6 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Font -->
-    <Font
-      cssVariable="--font-google-sans-code"
-      preload={[{ subset: "latin", weight: 400, style: "normal" }]}
-    />
-
     <!-- Primary meta -->
     <title>{title}</title>
     <meta name="title" content={title} />
@@ -68,14 +62,9 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <!-- Extra head content injected by child layouts (e.g. JSON-LD, article meta) -->
     <slot name="head" />
 
-    {
-      site.googleVerification && (
-        <meta
-          name="google-site-verification"
-          content={site.googleVerification}
-        />
-      )
-    }
+    {site.googleVerification && (
+      <meta name="google-site-verification" content={site.googleVerification} />
+    )}
 
     <!--
       Inline FOUC-prevention script: sets data-theme on <html> before
@@ -98,9 +87,7 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 
     <ClientRouter />
   </head>
-  <body
-    class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
-  >
+  <body class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col">
     <slot />
     <script>
       import "@/scripts/theme";

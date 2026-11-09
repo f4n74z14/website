@@ -38,6 +38,14 @@
   scroll-margin-block: 1rem;
 }
 
+.callout {
+    padding: 20px 20px 20px 20px;
+}
+
+.callout-title {
+    gap: 8px;
+}
+
 /* Tooltip */
 .callout-content {
     overflow: visible !important;

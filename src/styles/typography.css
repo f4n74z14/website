@@ -27,6 +27,10 @@
       @apply text-foreground;
     }
 
+    :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+        font-weight: 400;
+    }
+
     a:not([data-footnote-ref]):not([data-footnote-backref])  {
       @apply text-accent hover:opacity-80 wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
     }
@@ -127,6 +131,17 @@
   }
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
+  @font-face {
+    font-family: "Ubuntu Mono";
+    src: url("/fonts/UbuntuMono-Regular.woff2") format("woff2");
+  }
+
+  pre,
+  pre code,
+  code {
+    font-family: "Ubuntu Mono", monospace;
+  }
+
   .astro-code {
     @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
   }
