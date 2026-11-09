@@ -27,8 +27,16 @@
       @apply text-foreground;
     }
 
-    a {
-      @apply text-foreground hover:text-accent wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
+    a:not([data-footnote-ref]):not([data-footnote-backref])  {
+      @apply text-accent hover:opacity-80 wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
+    }
+
+    a[data-footnote-ref] {
+      @apply text-foreground underline-offset-4;
+    }
+
+    a[data-footnote-backref] {
+      @apply text-foreground no-underline hover:text-accent;
     }
 
     ul {
