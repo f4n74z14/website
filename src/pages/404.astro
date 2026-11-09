@@ -7,6 +7,9 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
+import { Image } from "astro:assets";
+import pingu from "@/assets/images/pingu.avif";
+
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 ---
@@ -20,8 +23,9 @@ const t = useTranslations(locale);
   >
     <div class="mb-14 flex flex-col items-center justify-center">
       <h1 class="text-accent text-9xl font-bold">404</h1>
-      <span aria-hidden="true"> ¯\_(ツ)_/¯ </span>
       <p class="mt-4 text-2xl sm:text-3xl">{t.notFound.message}</p>
+      <br />
+      <Image src={pingu} alt="bleh" loading="eager" fetchpriority="high" />
       <LinkButton
         href={getRelativeLocaleUrl(locale, "")}
         class="my-6 text-lg underline decoration-dashed underline-offset-8"
