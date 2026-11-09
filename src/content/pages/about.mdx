@@ -3,6 +3,18 @@ title: "Обо мне"
 description: "Обо мне"
 ---
 
+import { Image } from "astro:assets";
+import maskot from "@/assets/images/maskot.webp";
+
+<Image 
+  src={maskot} 
+  alt="Маскот" 
+  height="480"
+  width="480"
+  loading="eager" 
+  fetchpriority="high" 
+/>
+
 Привет! Рад, что вы заглянули сюда.
 
 Данный блог -- это просто небольшой личный проект. 
