@@ -37,3 +37,94 @@
 :target {
   scroll-margin-block: 1rem;
 }
+
+/* Tooltip */
+.callout-content {
+    overflow: visible !important;
+}
+
+abbr.custom-tooltip {
+  anchor-name: --tooltip-anchor;
+  anchor-scope: --tooltip-anchor;
+
+  position: relative;
+  display: inline-block;
+  cursor: help;
+
+  text-decoration: underline dashed;
+  text-underline-offset: 4px;
+}
+
+@position-try --tooltip-left {
+  justify-self: start;
+}
+
+@position-try --tooltip-right {
+  justify-self: end;
+}
+
+@position-try --tooltip-bottom {
+  position-area: bottom;
+  margin-block: 6px 0;
+}
+
+@position-try --tooltip-bottom-left {
+  position-area: bottom;
+  justify-self: start;
+  margin-block: 6px 0;
+}
+
+@position-try --tooltip-bottom-right {
+  position-area: bottom;
+  justify-self: end;
+  margin-block: 6px 0;
+}
+
+abbr.custom-tooltip::after {
+  content: attr(data-tooltip);
+
+  position: fixed;
+  position-anchor: --tooltip-anchor;
+  position-area: top;
+
+  justify-self: anchor-center;
+  margin: 0 12px 6px;
+
+  width: max-content;
+  max-width: min(250px, calc(100vw - 24px));
+  box-sizing: border-box;
+
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.3rem;
+
+  background: var(--background);
+  color: var(--foreground);
+
+  font-size: 0.90rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+
+  position-try-fallbacks:
+    --tooltip-left,
+    --tooltip-right,
+    --tooltip-bottom,
+    --tooltip-bottom-left,
+    --tooltip-bottom-right;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+abbr.custom-tooltip:hover::after,
+abbr.custom-tooltip:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}

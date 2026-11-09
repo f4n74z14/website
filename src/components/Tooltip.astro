@@ -1,0 +1,11 @@
+---
+interface Props {
+  term: string;
+}
+
+const { term } = Astro.props;
+---
+
+<abbr data-tooltip={term} tabindex="0" class="custom-tooltip">
+  <slot />
+</abbr>
