@@ -84,7 +84,6 @@
     ========================================== */
 
 :root {
-    /* Default callout colors */
     --callout-note-color-light: var(--nord-10);
     --callout-abstract-color-light: var(--nord-15);
     --callout-info-color-light: var(--nord-8);
@@ -98,6 +97,8 @@
     --callout-failure-color-light: var(--nord-11);
     --callout-danger-color-light: var(--nord-11);
     --callout-bug-color-light: var(--nord-11);
+    --callout-caution-color-light: var(--callout-warning-color-light);
+    --callout-important-color-light: var(--callout-failure-color-light);
 
     --callout-example-color-light: var(--nord-15);
     --callout-quote-color-light: var(--nord-3);
@@ -117,9 +118,46 @@
     --callout-failure-color-dark: var(--nord-11);
     --callout-danger-color-dark: var(--nord-11);
     --callout-bug-color-dark: var(--nord-11);
+    --callout-caution-color-dark: var(--callout-warning-color-dark);
+    --callout-important-color-dark: var(--callout-failure-color-dark);
 
     --callout-example-color-dark: var(--nord-15);
     --callout-quote-color-dark: var(--nord-4);
+}
+
+.callout-title,
+.callout-title-text,
+.callout-title-icon,
+.callout-fold-icon {
+    color: var(--rc-color-light);
+}
+
+.dark .callout-title,
+.dark .callout-title-text,
+.dark .callout-title-icon,
+.dark .callout-fold-icon {
+    color: var(--rc-color-dark);
+}
+
+.callout-title-icon svg,
+.callout-fold-icon svg {
+    color: inherit;
+    stroke: currentColor;
+}
+
+[data-callout="danger"] {
+  --rc-color-light: var(--callout-danger-color-light, var(--nord-11));
+  --rc-color-dark: var(--callout-danger-color-dark, var(--nord-11));
+}
+
+[data-callout="info"] {
+  --rc-color-light: var(--callout-info-color-light, var(--nord-8));
+  --rc-color-dark: var(--callout-info-color-dark, var(--nord-8));
+}
+
+[data-callout="success"] {
+  --rc-color-light: var(--callout-success-color-light, var(--nord-14));
+  --rc-color-dark: var(--callout-success-color-dark, var(--nord-14));
 }
 
 /* ==========================================
