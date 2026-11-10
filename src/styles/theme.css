@@ -125,6 +125,10 @@
     --callout-quote-color-dark: var(--nord-4);
 }
 
+.callout {
+    font-size: inherit !important;
+}
+
 .callout-title,
 .callout-title-text,
 .callout-title-icon,
