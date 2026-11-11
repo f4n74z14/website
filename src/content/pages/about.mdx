@@ -5,6 +5,7 @@ description: "Обо мне"
 
 import { Image } from "astro:assets";
 import maskot from "@/assets/images/maskot.webp";
+import MusicLink from "@/components/MusicLink.astro";
 
 <Image 
   src={maskot} 
@@ -15,6 +16,14 @@ import maskot from "@/assets/images/maskot.webp";
   fetchpriority="high" 
   style="border: none"
 />
+
+<p class="text-right">
+    <MusicLink
+      href="https://audius.co/DeanEvenson/touching-infinity"
+      title="Touching Infinity"
+      artist="Dean Evenson"
+    />
+</p>
 
 Привет! Рад, что вы заглянули сюда.
 

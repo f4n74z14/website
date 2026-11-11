@@ -5,6 +5,7 @@ import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
+import MusicPlayer from "@/components/MusicPlayer.astro";
 import config from "@/config";
 
 const about = await getEntry("pages", "about");
@@ -33,4 +34,5 @@ const { Content } = await render(about);
   </Main>
 
   <Footer />
+  <MusicPlayer />
 </Layout>

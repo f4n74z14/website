@@ -1,0 +1,1030 @@
+<div
+  id="music-player"
+  data-open="false"
+  transition:persist="music-player"
+  class="fixed inset-x-0 bottom-0 z-50"
+  aria-hidden="true"
+  inert
+>
+  <div
+    class="border-t border-border bg-background/95 backdrop-blur-md"
+    style="padding-bottom: env(safe-area-inset-bottom);"
+  >
+    <div class="music-controls mx-auto flex max-w-app items-center">
+      <!-- Play / Pause -->
+      <button
+        id="music-play"
+        type="button"
+        disabled
+        aria-label="Play"
+        class="music-icon-button size-8 shrink-0 rounded-full border border-border"
+      >
+        <svg
+          id="music-play-icon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m8 5 12 7-12 7V5Z" />
+        </svg>
+
+        <svg
+          id="music-pause-icon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+          class="hidden"
+        >
+          <path d="M9 5v14M15 5v14" />
+        </svg>
+      </button>
+
+      <!-- Current time -->
+      <span
+        id="music-current"
+        class="music-time shrink-0 text-right text-xs tabular-nums text-muted-foregroundd"
+      >
+        0:00
+      </span>
+
+      <!-- Seek bar -->
+      <div class="music-seek">
+        <input
+          id="music-progress"
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          disabled
+          aria-label="Playback position"
+          class="music-range music-range--seek"
+        />
+
+        <span
+          id="music-loading"
+          class="pointer-events-none absolute inset-0 z-10 hidden items-center justify-center"
+          role="status"
+          aria-label="Loading audio"
+        >
+          <svg
+            class="size-3.5 animate-spin text-accent"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              stroke="currentColor"
+              stroke-width="2.5"
+              opacity="0.2"
+            />
+            <path
+              d="M21 12a9 9 0 0 0-9-9"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </span>
+      </div>
+
+      <!-- Duration -->
+      <span
+        id="music-duration"
+        class="music-time shrink-0 text-xs tabular-nums text-muted-foreground"
+      >
+        0:00
+      </span>
+
+      <!-- Volume -->
+      <input
+        id="music-volume"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        aria-label="Volume"
+        class="music-range music-range--volume"
+      />
+
+      <!-- Audius -->
+      <a
+        id="music-audius"
+        href="https://audius.co/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open track on Audius"
+        title="Open on Audius"
+        class="music-icon-button size-8 shrink-0"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M14 3h7v7" />
+          <path d="M10 14 21 3" />
+          <path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
+        </svg>
+      </a>
+
+      <!-- Close -->
+      <button
+        id="music-close"
+        type="button"
+        aria-label="Close player"
+        title="Close player"
+        class="music-icon-button size-8 shrink-0"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<audio id="music-audio" transition:persist="music-audio" preload="none"></audio>
+
+<style>
+  /* =========================================
+     Player animation
+  ========================================= */
+
+  #music-player {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+      transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 200ms ease,
+      visibility 0s linear 280ms;
+  }
+
+  #music-player[data-open="true"] {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transition:
+      transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 200ms ease,
+      visibility 0s;
+  }
+
+  /* =========================================
+     Player layout
+  ========================================= */
+
+  .music-controls {
+    height: 56px;
+    width: 100%;
+    gap: 12px;
+    padding-inline: 16px;
+  }
+
+  .music-time {
+    width: 36px;
+    flex: 0 0 36px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Seek container takes all remaining space. */
+
+  .music-seek {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    height: 32px;
+    min-width: 48px;
+    flex: 1 1 0%;
+  }
+
+  /* =========================================
+     Icon buttons
+  ========================================= */
+
+  .music-icon-button {
+    display: grid;
+    place-items: center;
+
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+
+    color: var(--muted-foreground);
+    border-radius: 9999px;
+
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  #music-play {
+    border: 1px solid var(--border);
+  }
+
+  .music-icon-button:hover:not(:disabled) {
+    color: var(--accent);
+    background-color: var(--muted);
+    border-color: var(--accent);
+  }
+
+  .music-icon-button:active:not(:disabled) {
+    transform: scale(0.92);
+  }
+
+  .music-icon-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .music-icon-button:disabled {
+    cursor: wait;
+    opacity: 0.5;
+  }
+
+  /* =========================================
+     Range inputs
+  ========================================= */
+
+  .music-range {
+    display: block;
+    height: 24px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    background: transparent;
+    cursor: pointer;
+    touch-action: pan-y;
+
+    --progress: 0%;
+  }
+
+  .music-range:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Seek: fills remaining space. */
+
+  #music-progress.music-range {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  /* Volume: always exactly 64px on desktop. */
+
+  #music-volume.music-range {
+    width: 64px;
+    flex: 0 0 64px;
+  }
+
+  /* Chromium / Safari track */
+
+  .music-range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 9999px;
+
+    background: linear-gradient(
+      to right,
+      var(--accent) 0%,
+      var(--accent) var(--progress),
+      var(--border) var(--progress),
+      var(--border) 100%
+    );
+  }
+
+  /* Chromium / Safari thumb */
+
+  .music-range::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 10px;
+    height: 10px;
+    margin-top: -3px;
+
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--background);
+
+    transition: transform 150ms ease;
+  }
+
+  .music-range:hover:not(:disabled)::-webkit-slider-thumb {
+    transform: scale(1.25);
+  }
+
+  /* Firefox track */
+
+  .music-range::-moz-range-track {
+    height: 4px;
+    border: none;
+    border-radius: 9999px;
+    background: var(--border);
+  }
+
+  .music-range::-moz-range-progress {
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--accent);
+  }
+
+  /* Firefox thumb */
+
+  .music-range::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--background);
+
+    transition: transform 150ms ease;
+  }
+
+  .music-range:hover:not(:disabled)::-moz-range-thumb {
+    transform: scale(1.25);
+  }
+
+  /* Keyboard focus */
+
+  .music-range:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 9999px;
+  }
+
+  /* =========================================
+     Tablet and desktop
+  ========================================= */
+
+  @media (min-width: 640px) {
+    #music-volume {
+      display: block;
+    }
+  }
+
+  /* =========================================
+     Mobile
+  ========================================= */
+
+  @media (max-width: 639px) {
+    .music-controls {
+      height: 52px;
+      gap: 8px;
+      padding-inline: 12px;
+    }
+
+    .music-time {
+      width: 32px;
+      flex-basis: 32px;
+      font-size: 11px;
+    }
+
+    .music-seek {
+      height: 32px;
+      min-width: 40px;
+    }
+
+    .music-icon-button {
+      width: 32px;
+      height: 32px;
+      flex-basis: 32px;
+    }
+
+    #music-volume {
+      display: none;
+    }
+  }
+
+  /* Narrow phones */
+
+  @media (max-width: 380px) {
+    .music-controls {
+      gap: 6px;
+      padding-inline: 8px;
+    }
+
+    .music-time {
+      width: 29px;
+      flex-basis: 29px;
+      font-size: 10px;
+    }
+
+    .music-seek {
+      min-width: 32px;
+    }
+
+    .music-icon-button {
+      width: 30px;
+      height: 30px;
+      flex-basis: 30px;
+    }
+  }
+
+  /* Reduced motion */
+
+  @media (prefers-reduced-motion: reduce) {
+    #music-player,
+    .music-icon-button,
+    .music-range::-webkit-slider-thumb,
+    .music-range::-moz-range-thumb {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // =========================================
+  // Configuration and shared state
+  // =========================================
+
+  const VOLUME_KEY = "fantazia:music-volume";
+  const DEFAULT_VOLUME = 0.7;
+
+  const AUDIUS_API = "https://api.audius.co/v1";
+  const AUDIUS_HOSTS = new Set(["audius.co", "www.audius.co"]);
+
+  // These survive Astro page transitions.
+  const resolvedTracks = new Map<string, string>();
+
+  const clamp = (value: number, min = 0, max = 1) =>
+    Math.min(max, Math.max(min, value));
+
+  const formatTime = (seconds: number): string => {
+    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+    const minutes = Math.floor(seconds / 60);
+    const remaining = Math.floor(seconds % 60);
+
+    return `${minutes}:${String(remaining).padStart(2, "0")}`;
+  };
+
+  const isAbortError = (error: unknown): boolean =>
+    error instanceof Error && error.name === "AbortError";
+
+  function getSavedVolume(): number {
+    try {
+      const saved = localStorage.getItem(VOLUME_KEY);
+
+      if (saved === null) return DEFAULT_VOLUME;
+
+      const parsed = Number(saved);
+
+      return Number.isFinite(parsed) ? clamp(parsed) : DEFAULT_VOLUME;
+    } catch {
+      return DEFAULT_VOLUME;
+    }
+  }
+
+  function getAudiusTrackUrl(value: string): URL {
+    const url = new URL(value);
+
+    if (
+      url.protocol !== "https:" ||
+      !AUDIUS_HOSTS.has(url.hostname) ||
+      url.username ||
+      url.password
+    ) {
+      throw new Error("Invalid Audius track URL");
+    }
+
+    url.hash = "";
+
+    return url;
+  }
+
+  async function resolveTrackId(
+    trackUrl: string,
+    signal: AbortSignal
+  ): Promise<string> {
+    const url = getAudiusTrackUrl(trackUrl);
+    const cacheKey = url.href;
+
+    const cached = resolvedTracks.get(cacheKey);
+
+    if (cached) return cached;
+
+    const resolveUrl = new URL(`${AUDIUS_API}/resolve`);
+    resolveUrl.searchParams.set("url", cacheKey);
+
+    const response = await fetch(resolveUrl, { signal });
+
+    if (!response.ok) {
+      throw new Error(`Audius Resolve failed: ${response.status}`);
+    }
+
+    const result = (await response.json()) as {
+      data?: {
+        id?: unknown;
+      };
+    };
+
+    const id = result.data?.id;
+
+    if (typeof id !== "string" || !id) {
+      throw new Error("Audius track ID not found");
+    }
+
+    resolvedTracks.set(cacheKey, id);
+
+    return id;
+  }
+
+  // =========================================
+  // Player controller
+  // =========================================
+
+  type MusicPlayerController = {
+    player: HTMLElement;
+    audio: HTMLAudioElement;
+    selectTrack: (link: HTMLElement) => Promise<void>;
+    beforeSwap: () => void;
+  };
+
+  function createMusicPlayer(
+    player: HTMLElement,
+    audio: HTMLAudioElement
+  ): MusicPlayerController {
+    const $ = <T extends HTMLElement = HTMLElement>(id: string): T => {
+      const element = player.querySelector(`#${id}`);
+
+      if (!element) {
+        throw new Error(`Music player: element #${id} not found`);
+      }
+
+      return element as T;
+    };
+
+    // Elements belonging to this particular player instance.
+    const playButton = $<HTMLButtonElement>("music-play");
+    const playIcon = $("music-play-icon");
+    const pauseIcon = $("music-pause-icon");
+
+    const progress = $<HTMLInputElement>("music-progress");
+    const volume = $<HTMLInputElement>("music-volume");
+
+    const currentLabel = $("music-current");
+    const durationLabel = $("music-duration");
+
+    const audiusLink = $<HTMLAnchorElement>("music-audius");
+    const closeButton = $<HTMLButtonElement>("music-close");
+
+    const loadingIndicator = player.querySelector("#music-loading");
+
+    // State belongs to this player instance.
+    let isResolvingTrack = false;
+    let isBuffering = false;
+
+    let requestId = 0;
+    let resolveController: AbortController | null = null;
+
+    // =========================================
+    // Volume
+    // =========================================
+
+    function saveVolume(): void {
+      try {
+        localStorage.setItem(VOLUME_KEY, String(audio.volume));
+      } catch {
+        // Storage may be unavailable.
+      }
+    }
+
+    audio.volume = getSavedVolume();
+    volume.value = String(audio.volume);
+    volume.style.setProperty("--progress", `${audio.volume * 100}%`);
+
+    volume.addEventListener("input", () => {
+      audio.volume = clamp(Number(volume.value));
+
+      volume.style.setProperty("--progress", `${audio.volume * 100}%`);
+    });
+
+    volume.addEventListener("change", saveVolume);
+
+    // =========================================
+    // Player visibility and UI
+    // =========================================
+
+    function showPlayer(): void {
+      player.inert = false;
+      player.setAttribute("aria-hidden", "false");
+      player.dataset.open = "true";
+    }
+
+    function hidePlayer(): void {
+      player.setAttribute("aria-hidden", "true");
+      player.inert = true;
+      player.dataset.open = "false";
+    }
+
+    function updatePlayerUI(): void {
+      const isPlaying = !audio.paused && !audio.ended;
+      const isLoading = isResolvingTrack || isBuffering;
+
+      playIcon.classList.toggle("hidden", isPlaying);
+      pauseIcon.classList.toggle("hidden", !isPlaying);
+
+      playButton.disabled = isResolvingTrack || !audio.hasAttribute("src");
+
+      playButton.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+
+      playButton.setAttribute("aria-busy", String(isLoading));
+
+      if (loadingIndicator) {
+        loadingIndicator.classList.toggle("hidden", !isLoading);
+        loadingIndicator.classList.toggle("flex", isLoading);
+      }
+    }
+
+    function setBuffering(value: boolean): void {
+      isBuffering = value;
+      updatePlayerUI();
+    }
+
+    // =========================================
+    // Progress
+    // =========================================
+
+    function updateProgress(): void {
+      const duration = audio.duration;
+      const hasDuration = Number.isFinite(duration) && duration > 0;
+
+      progress.disabled = !hasDuration;
+
+      progress.value = hasDuration
+        ? String((audio.currentTime / duration) * 100)
+        : "0";
+
+      progress.style.setProperty("--progress", `${progress.value}%`);
+
+      currentLabel.textContent = formatTime(audio.currentTime);
+
+      if (hasDuration) {
+        durationLabel.textContent = formatTime(duration);
+      }
+    }
+
+    audio.addEventListener("loadedmetadata", updateProgress);
+    audio.addEventListener("durationchange", updateProgress);
+    audio.addEventListener("timeupdate", updateProgress);
+
+    progress.addEventListener("input", () => {
+      const duration = audio.duration;
+
+      if (!Number.isFinite(duration) || duration <= 0) return;
+
+      const percentage = clamp(Number(progress.value), 0, 100);
+      const time = (percentage / 100) * duration;
+
+      audio.currentTime = time;
+
+      progress.style.setProperty("--progress", `${percentage}%`);
+      currentLabel.textContent = formatTime(time);
+    });
+
+    // =========================================
+    // Audio state events
+    // =========================================
+
+    audio.addEventListener("play", updatePlayerUI);
+
+    audio.addEventListener("pause", () => {
+      isBuffering = false;
+      updatePlayerUI();
+    });
+
+    audio.addEventListener("playing", () => {
+      setBuffering(false);
+    });
+
+    audio.addEventListener("canplay", () => {
+      setBuffering(false);
+    });
+
+    audio.addEventListener("waiting", () => {
+      if (!audio.paused) setBuffering(true);
+    });
+
+    audio.addEventListener("stalled", () => {
+      if (!audio.paused) setBuffering(true);
+    });
+
+    audio.addEventListener("error", () => {
+      setBuffering(false);
+
+      if (audio.error) {
+        console.error("Audius audio error:", audio.error);
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      audio.currentTime = 0;
+      updateProgress();
+      updatePlayerUI();
+    });
+
+    // =========================================
+    // Playback
+    // =========================================
+
+    async function playAudio(): Promise<void> {
+      if (isResolvingTrack || !audio.hasAttribute("src")) return;
+
+      if (audio.ended) {
+        audio.currentTime = 0;
+      }
+
+      try {
+        await audio.play();
+      } catch (error) {
+        if (isAbortError(error)) return;
+
+        const errorName = error instanceof Error ? error.name : "";
+
+        if (errorName !== "NotAllowedError") {
+          console.error("Audio playback failed:", error);
+        }
+
+        isBuffering = false;
+        updatePlayerUI();
+      }
+    }
+
+    function togglePlayback(): void {
+      if (isResolvingTrack || !audio.hasAttribute("src")) return;
+
+      if (audio.paused) {
+        void playAudio();
+      } else {
+        audio.pause();
+      }
+    }
+
+    playButton.addEventListener("click", togglePlayback);
+
+    // =========================================
+    // Track selection
+    // =========================================
+
+    async function selectTrack(link: HTMLElement): Promise<void> {
+      const rawTrackUrl = link.dataset.audiusTrack?.trim();
+
+      if (!rawTrackUrl) return;
+
+      let trackUrl: string;
+
+      try {
+        trackUrl = getAudiusTrackUrl(rawTrackUrl).href;
+      } catch (error) {
+        console.error("Invalid Audius track URL:", error);
+        return;
+      }
+
+      showPlayer();
+      audiusLink.href = trackUrl;
+
+      // Clicking the currently selected track toggles playback.
+      if (audio.dataset.track === trackUrl) {
+        if (!isResolvingTrack && audio.hasAttribute("src")) {
+          togglePlayback();
+        }
+
+        return;
+      }
+
+      // Invalidate and cancel the previous request.
+      const currentRequest = ++requestId;
+
+      resolveController?.abort();
+
+      const controller = new AbortController();
+      resolveController = controller;
+
+      // Prepare the new track.
+      isResolvingTrack = true;
+      isBuffering = false;
+
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+
+      audio.dataset.track = trackUrl;
+      audio.loop = link.dataset.loop === "true";
+
+      progress.value = "0";
+      progress.disabled = true;
+      progress.style.setProperty("--progress", "0%");
+
+      currentLabel.textContent = "0:00";
+      durationLabel.textContent = "0:00";
+
+      updatePlayerUI();
+
+      try {
+        const id = await resolveTrackId(trackUrl, controller.signal);
+
+        if (currentRequest !== requestId) return;
+
+        resolveController = null;
+        isResolvingTrack = false;
+
+        audio.src = `${AUDIUS_API}/tracks/${encodeURIComponent(id)}/stream`;
+
+        audio.load();
+
+        isBuffering = true;
+        updatePlayerUI();
+
+        void playAudio();
+      } catch (error) {
+        if (currentRequest !== requestId) return;
+
+        resolveController = null;
+        isResolvingTrack = false;
+        isBuffering = false;
+
+        audio.removeAttribute("src");
+        audio.load();
+
+        delete audio.dataset.track;
+
+        progress.value = "0";
+        progress.disabled = true;
+        progress.style.setProperty("--progress", "0%");
+
+        updatePlayerUI();
+
+        if (!isAbortError(error)) {
+          console.error("Audius track loading failed:", error);
+        }
+      }
+    }
+
+    // =========================================
+    // Close player
+    // =========================================
+
+    closeButton.addEventListener("click", () => {
+      requestId++;
+
+      resolveController?.abort();
+      resolveController = null;
+
+      isResolvingTrack = false;
+      isBuffering = false;
+
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+
+      delete audio.dataset.track;
+
+      audio.loop = false;
+
+      progress.value = "0";
+      progress.disabled = true;
+      progress.style.setProperty("--progress", "0%");
+
+      currentLabel.textContent = "0:00";
+      durationLabel.textContent = "0:00";
+
+      updatePlayerUI();
+      hidePlayer();
+    });
+
+    // =========================================
+    // Navigation cleanup
+    // =========================================
+
+    function beforeSwap(): void {
+      // Cancel any pending Resolve request.
+      requestId++;
+
+      resolveController?.abort();
+      resolveController = null;
+
+      isResolvingTrack = false;
+      isBuffering = false;
+
+      // Stop playback, but retain the source and track ID.
+      audio.pause();
+
+      if (audio.readyState > 0 && Number.isFinite(audio.duration)) {
+        audio.currentTime = 0;
+      }
+
+      hidePlayer();
+
+      updateProgress();
+      updatePlayerUI();
+    }
+
+    // Initial state for this DOM instance.
+    progress.disabled = true;
+    updatePlayerUI();
+
+    return {
+      player,
+      audio,
+      selectTrack,
+      beforeSwap,
+    };
+  }
+
+  // =========================================
+  // Astro navigation lifecycle
+  // =========================================
+
+  let activePlayer: MusicPlayerController | null = null;
+
+  function initMusicPlayer(): void {
+    const player = document.getElementById("music-player");
+    const audio = document.getElementById("music-audio");
+
+    // This page does not contain a music player.
+    if (!player || !audio) {
+      activePlayer = null;
+      return;
+    }
+
+    // Astro may have persisted the same player between posts.
+    // Do not attach duplicate event listeners to it.
+    if (activePlayer?.player === player && activePlayer.audio === audio) {
+      return;
+    }
+
+    // A new page has a new player DOM.
+    activePlayer = createMusicPlayer(player, audio as HTMLAudioElement);
+  }
+
+  // Initialize on the first page load.
+  initMusicPlayer();
+
+  // Reinitialize when Astro creates the next page DOM.
+  document.addEventListener("astro:page-load", initMusicPlayer);
+
+  // =========================================
+  // Global event delegation
+  // =========================================
+
+  // One listener for all MusicLink buttons, including
+  // buttons added after Astro navigation.
+  document.addEventListener("click", (event: MouseEvent) => {
+    if (!(event.target instanceof Element)) return;
+
+    const link = event.target.closest<HTMLElement>("[data-audius-track]");
+
+    if (!link || !activePlayer) return;
+
+    event.preventDefault();
+    void activePlayer.selectTrack(link);
+  });
+
+  // Stop playback before Astro swaps the current page.
+  document.addEventListener("astro:before-swap", () => {
+    activePlayer?.beforeSwap();
+  });
+</script>

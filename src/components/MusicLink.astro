@@ -1,0 +1,22 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  artist: string;
+  loop?: boolean;
+}
+
+const { href, title, artist, loop = false } = Astro.props;
+---
+
+<a
+  href={href}
+  rel="noopener noreferrer"
+  data-audius-track={href}
+  data-title={title}
+  data-artist={artist}
+  data-loop={loop ? "true" : undefined}
+  class="cursor-pointer text-accent no-underline"
+>
+  ♫ {artist} – {title}
+</a>

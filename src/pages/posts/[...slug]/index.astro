@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection, render } from "astro:content";
 import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import MusicPlayer from "@/components/MusicPlayer.astro";
 import Datetime from "@/components/Datetime.astro";
 import Tag from "@/components/Tag.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
@@ -157,11 +158,9 @@ const ogImage = ogImageUrl
     <div class="sm:my-8 sm:flex sm:items-start sm:justify-between sm:gap-8">
       <div class="mt-4 mb-8 flex items-start justify-between gap-4 sm:my-0">
         <ul class="flex flex-wrap gap-4">
-          {
-            tags.map(tag => (
-              <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
-            ))
-          }
+          {tags.map(tag => (
+            <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+          ))}
         </ul>
         <EditPost class="flex-none sm:hidden" {hideEditPost} {post} />
       </div>
@@ -172,6 +171,7 @@ const ogImage = ogImageUrl
     <AdjacentPostNav {prevPost} {nextPost} />
   </main>
   <Footer />
+  <MusicPlayer />
 </PostLayout>
 
 <script is:inline data-astro-rerun>
