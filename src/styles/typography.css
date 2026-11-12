@@ -36,12 +36,10 @@
     }
 
     a[data-footnote-ref] {
-      @apply text-foreground underline-offset-4;
-      display: inline-block;
-      min-width: 24px;
-      min-height: 24px;
-      text-align: center;
-      line-height: 24px;
+      @apply text-foreground;
+      display: inline;
+      padding: 4px 2px;
+      margin-inline: -2px;
     }
 
     a[data-footnote-backref] {

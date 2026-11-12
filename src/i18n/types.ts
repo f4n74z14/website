@@ -65,6 +65,14 @@ export interface UIStrings {
     noResults: string;
     goToPreviousPage: string;
     goToNextPage: string;
+    copyCode: string;
+    codeCopied: string;
+    zoomImageGeneral: string;
+    zoomImage: string;
+    imagePreviewGeneral: string;
+    imagePreview: string;
+    closeImagePreview: string;
+    linkToSection: string;
   };
   notFound: {
     title: string;
