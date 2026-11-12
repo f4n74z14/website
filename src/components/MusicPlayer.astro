@@ -581,6 +581,7 @@
     audio: HTMLAudioElement;
     selectTrack: (link: HTMLElement) => Promise<void>;
     beforeSwap: () => void;
+    fadeOutAndPause: (duration?: number) => Promise<void>;
   };
 
   function createMusicPlayer(
@@ -596,6 +597,49 @@
 
       return element as T;
     };
+
+    let userVolume = getSavedVolume();
+    let fadeProgress = 1;
+    let fadePromise: Promise<void> | null = null;
+
+    function fadeOutAndPause(duration = 350): Promise<void> {
+      if (audio.paused) return Promise.resolve();
+
+      // Reuse an already running fade.
+      if (fadePromise) return fadePromise;
+
+      fadePromise = new Promise(resolve => {
+        const startTime = performance.now();
+
+        function update(now: number): void {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          fadeProgress = 1 - progress;
+          audio.volume = userVolume * fadeProgress;
+
+          if (progress < 1) {
+            requestAnimationFrame(update);
+            return;
+          }
+
+          audio.pause();
+
+          // Restore the user's selected volume for the next playback.
+          fadeProgress = 1;
+          audio.volume = userVolume;
+
+          fadePromise = null;
+          updatePlayerUI();
+
+          resolve();
+        }
+
+        requestAnimationFrame(update);
+      });
+
+      return fadePromise;
+    }
 
     // Elements belonging to this particular player instance.
     const playButton = $<HTMLButtonElement>("music-play");
@@ -626,20 +670,23 @@
 
     function saveVolume(): void {
       try {
-        localStorage.setItem(VOLUME_KEY, String(audio.volume));
+        localStorage.setItem(VOLUME_KEY, String(userVolume));
       } catch {
         // Storage may be unavailable.
       }
     }
 
-    audio.volume = getSavedVolume();
-    volume.value = String(audio.volume);
-    volume.style.setProperty("--progress", `${audio.volume * 100}%`);
+    audio.volume = userVolume;
+    volume.value = String(userVolume);
+
+    volume.style.setProperty("--progress", `${userVolume * 100}%`);
 
     volume.addEventListener("input", () => {
-      audio.volume = clamp(Number(volume.value));
+      userVolume = clamp(Number(volume.value));
 
-      volume.style.setProperty("--progress", `${audio.volume * 100}%`);
+      audio.volume = userVolume * fadeProgress;
+
+      volume.style.setProperty("--progress", `${userVolume * 100}%`);
     });
 
     volume.addEventListener("change", saveVolume);
@@ -799,7 +846,7 @@
       if (audio.paused) {
         void playAudio();
       } else {
-        audio.pause();
+        void fadeOutAndPause();
       }
     }
 
@@ -846,6 +893,13 @@
       // Prepare the new track.
       isResolvingTrack = true;
       isBuffering = false;
+
+      updatePlayerUI();
+
+      // Fade out the previous track before replacing its source.
+      await fadeOutAndPause(300);
+
+      if (currentRequest !== requestId) return;
 
       audio.pause();
       audio.removeAttribute("src");
@@ -907,14 +961,18 @@
     // Close player
     // =========================================
 
-    closeButton.addEventListener("click", () => {
-      requestId++;
+    closeButton.addEventListener("click", async () => {
+      const closeRequest = ++requestId;
 
       resolveController?.abort();
       resolveController = null;
 
       isResolvingTrack = false;
       isBuffering = false;
+
+      await fadeOutAndPause(250);
+
+      if (closeRequest !== requestId) return;
 
       audio.pause();
       audio.removeAttribute("src");
@@ -971,6 +1029,7 @@
       audio,
       selectTrack,
       beforeSwap,
+      fadeOutAndPause,
     };
   }
 
@@ -1026,5 +1085,22 @@
   // Stop playback before Astro swaps the current page.
   document.addEventListener("astro:before-swap", () => {
     activePlayer?.beforeSwap();
+  });
+
+  document.addEventListener("astro:before-preparation", event => {
+    const navigationEvent = event as Event & {
+      loader: () => Promise<void>;
+    };
+
+    const originalLoader = navigationEvent.loader;
+
+    navigationEvent.loader = async () => {
+      const pageLoading = originalLoader();
+
+      const audioFading =
+        activePlayer?.fadeOutAndPause(400) ?? Promise.resolve();
+
+      await Promise.all([pageLoading, audioFading]);
+    };
   });
 </script>
