@@ -37,10 +37,26 @@
 
     a[data-footnote-ref] {
       @apply text-foreground underline-offset-4;
+      display: inline-block;
+      min-width: 24px;
+      min-height: 24px;
+      text-align: center;
+      line-height: 24px;
     }
 
     a[data-footnote-backref] {
       @apply text-foreground no-underline hover:text-accent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      min-height: 32px;
+      margin-inline: 2px;
+    }
+
+    a[data-footnote-ref]:focus-visible,
+    a[data-footnote-backref]:focus-visible {
+      @apply outline-accent outline-2 outline-offset-2 outline-dashed;
     }
 
     ul {
