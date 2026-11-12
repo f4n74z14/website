@@ -60,22 +60,40 @@
 [data-theme="light"] {
   --background: var(--nord-6);
   --foreground: var(--nord-0);
-  --accent: var(--nord-10);
+
+  --accent: color-mix(
+    in srgb,
+    var(--nord-10) 75%,
+    var(--nord-0) 25%
+  );
   --accent-foreground: var(--nord-6);
+
   --muted: var(--nord-5);
   --muted-foreground: var(--nord-3);
-  --border: var(--nord-4);
+
+  --border: color-mix(
+    in srgb,
+    var(--nord-4) 65%,
+    var(--nord-3) 35%
+  );
 }
 
 /* Dark theme values */
 [data-theme="dark"] {
   --background: var(--nord-0);
-  --foreground: var(--nord-4);
+  --foreground: var(--nord-6);
+
   --accent: var(--nord-8);
   --accent-foreground: var(--nord-0);
+
   --muted: var(--nord-2);
   --muted-foreground: var(--nord-4);
-  --border: var(--nord-3);
+
+  --border: color-mix(
+    in srgb,
+    var(--nord-3) 70%,
+    var(--nord-4) 30%
+  );
 }
 
 
@@ -129,18 +147,36 @@
     font-size: inherit !important;
 }
 
+/* Titles use the main theme foreground. */
 .callout-title,
-.callout-title-text,
-.callout-title-icon,
-.callout-fold-icon {
-    color: var(--rc-color-light);
+.callout-title-text {
+    color: var(--foreground);
 }
 
-.dark .callout-title,
-.dark .callout-title-text,
+/* Light theme: darker semantic icons. */
+.callout-title-icon,
+.callout-fold-icon {
+    color: color-mix(
+        in srgb,
+        var(--rc-color-light) 50%,
+        var(--nord-0)
+    );
+}
+
+/* Dark theme: lighter semantic icons. */
 .dark .callout-title-icon,
 .dark .callout-fold-icon {
-    color: var(--rc-color-dark);
+    color: color-mix(
+        in srgb,
+        var(--rc-color-dark) 55%,
+        var(--nord-6) 45%
+    );
+}
+
+.callout-title-icon svg,
+.callout-fold-icon svg {
+    color: inherit;
+    stroke: currentColor;
 }
 
 .callout-title-icon svg,
