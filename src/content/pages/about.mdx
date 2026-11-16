@@ -26,15 +26,18 @@ import maskot from "@/assets/images/maskot.webp";
 
 ```java
 {
+    // [!code --:1]
     int currentYear = LocalDate.now().getYear()
+    // [!code ++:1]
+    int currentYear = LocalDate.now().getYear();
     String name;
     int age;
     Lang lang;
     Genre favGameGenre;
 
     private void fillGeneralInfo() {
-        name = "Андрей"
-        age = Math.abs(2000 - currentYear) // TODO: find cause of negative value
+        name = "Андрей";
+        age = Math.abs(2000 - currentYear); // TODO: find cause of negative value
         lang = Lang.JAVA; // С 2016 года
         favGameGenre = Genre.VISUAL_NOVEL; // И другие story-rich жанры
     }
@@ -42,7 +45,8 @@ import maskot from "@/assets/images/maskot.webp";
 ```
 
 Конечно, мой опыт не ограничивается лишь одним языком, однако он мой любимый.  
-Например, данный блог -- это работа с Astro, JS, CSS, HTML, дизайном, текстом, git, Cloudflare Pages.
+Например, данный блог -- это работа с Astro, JS, CSS, HTML, дизайном, текстом, git, Cloudflare Pages.  
+Код полностью открыт для всех на [GitHub](https://github.com/f4n74z14/website)
 
 Любимая цветовая схема -- [Nord](https://www.nordtheme.com/), а лучший моноширный шрифт это [PragmataPro Mono Liga](https://fsd.it/shop/fonts/pragmatapro/).  
 Предпочитаю работать без сглаживания шрифтов, выбирая pixel-sharp буковы.
@@ -61,14 +65,12 @@ import maskot from "@/assets/images/maskot.webp";
 Отсюда произрастает мой нейтралитет: то, что меня не допустили до программы не значит, что программа плохая.  
 То, что программа не плохая, не значит, что она подходит именно мне.
 
-Люблю эксперименты, если находится новая технология -- я с радостью ее протестирую
-, будь то [локальные модели](https://www.liquid.ai/)
-, которые работают на моей видеокарте, или [голосовой ввод](https://handy.computer/) вместо клавиатуры.
+Люблю эксперименты, если находится новая технология -- я с радостью ее протестирую, будь то [локальные модели](https://www.liquid.ai/), которые работают на моей видеокарте, или [голосовой ввод](https://handy.computer/) вместо клавиатуры.
 
 Предпочитаю чинить, а не заменять, однако до момента, пока починка не станет дороже замены. К примеру, взял мышь [Ardor Gaming Ulta](https://ardor-gaming.com/product/29431034/mysh-besprovodnaya-provodnaya-ardor-gaming-ulta/)
 по причине, что она предлагает решение проблемы ломающихся микропереключателей: горячая замена и 10 штук комплектных.  
 Маловероятно, что она выйдет из моды, да, она не самая крутая, ведь уже есть магнитные переключатели, вот и посмотрим, кто дольше продержится.
 
-Убежден, что кому-нибудь, когда-нибудь будет интересно это по-читать, я не стремлюсь за конкретной темой блога, а лишь хочу делиться и увековечить свои достижения.
+Убежден, что кому-нибудь, когда-нибудь будет интересно это почитать, я не стремлюсь за конкретной темой блога, а лишь хочу делиться и увековечить свои достижения.
 
 Спасибо за проявленный интерес.
