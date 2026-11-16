@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Socials from "./Socials.astro";
+import { LinkButton } from "@/components";
 import { useTranslations } from "@/i18n";
 
 type Props = {
@@ -17,12 +17,12 @@ const currentYear = new Date().getFullYear();
   class:list={["app-layout", { "mt-auto": !noMarginTop }, className]}
   {...attrs}
 >
-  <div
-    class="border-border flex flex-col items-center justify-between border-t py-6 sm:flex-row-reverse sm:py-4"
-  >
-    <Socials />
+  <div class="border-border flex flex-col items-center justify-between border-t py-6 sm:flex-row-reverse sm:py-4">
+    <LinkButton href="/thanks">{t.nav.thanks}</LinkButton>
     <div class="my-2 flex flex-col items-center whitespace-nowrap sm:flex-row">
-      <span>{t.footer.copyright} &#169; {currentYear}</span>
+      <span>
+        {t.footer.copyright} &#169; {currentYear}
+      </span>
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
       <span>{t.footer.license}</span>
     </div>

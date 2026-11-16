@@ -6,6 +6,7 @@ export default {
     posts: "Посты",
     tags: "Теги",
     about: "Обо мне",
+    thanks: "Благодарности",
     archives: "Архивы",
     search: "Поиск",
   },
