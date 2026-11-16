@@ -11,8 +11,8 @@ tags:
 description: Какие вопросы стоит задать? Почему не стоит стыдиться читов?
 ---
 import { Image } from "astro:assets";
+import { Tooltip, MusicLink, TextRight } from '@/components';
 import toughChoice from "@/assets/images/tough-choice.webp";
-import Tooltip from '@/components/Tooltip.astro';
 
 <Image 
   src={toughChoice} 
@@ -20,6 +20,14 @@ import Tooltip from '@/components/Tooltip.astro';
   loading="eager" 
   fetchpriority="high" 
 />
+
+<TextRight>
+    <MusicLink
+      href="https://audius.co/fantazia/whyne-для-новелки"
+      title="Для новелки"
+      artist="Whyne"
+    />
+</TextRight>
 
 ## Введение в сложность
 Мне казалось, что проблема выбора уровня сложности в играх давно решена, играй как хочешь! 

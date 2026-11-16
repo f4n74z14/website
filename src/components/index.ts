@@ -1,0 +1,11 @@
+export { default as Main } from "./Main.astro";
+export { default as Header } from "./Header.astro";
+export { default as Card } from "./Card.astro";
+export { default as Tooltip } from './Tooltip.astro';
+export { default as TextRight } from './TextRight.astro';
+export { default as Breadcrumb } from "./Breadcrumb.astro";
+export { default as LinkButton } from "./LinkButton.astro";
+export { default as MusicLink } from './MusicLink.astro';
+export { default as Pagination } from "./Pagination.astro";
+export { default as Footer } from "./Footer.astro";
+export { default as MusicPlayer } from "./MusicPlayer.astro";

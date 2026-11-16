@@ -4,8 +4,8 @@ description: "Обо мне"
 ---
 
 import { Image } from "astro:assets";
+import { MusicLink, TextRight } from "@/components";
 import maskot from "@/assets/images/maskot.webp";
-import MusicLink from "@/components/MusicLink.astro";
 
 <Image 
   src={maskot} 
@@ -17,13 +17,13 @@ import MusicLink from "@/components/MusicLink.astro";
   style="border: none"
 />
 
-<p class="text-right">
+<TextRight>
     <MusicLink
       href="https://audius.co/DeanEvenson/touching-infinity"
       title="Touching Infinity"
       artist="Dean Evenson"
     />
-</p>
+</TextRight>
 
 Привет! Рад, что вы заглянули сюда.
 

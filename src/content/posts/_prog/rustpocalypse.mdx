@@ -11,16 +11,15 @@ tags:
   - inefficiency
 description: Бабушке позвонили мошенники и заставили переписать квартиру на Rust
 ---
-import Tooltip from '@/components/Tooltip.astro';
-import MusicLink from "@/components/MusicLink.astro";
+import { Tooltip, MusicLink, TextRight } from '@/components';
 
-<p class="text-right">
+<TextRight>
     <MusicLink
       href="https://audius.co/obi350965/weight-of-the-rust"
       title="Weight Of The Rust"
       artist="OBI"
     />
-</p>
+</TextRight>
 
 Все слышали о том, насколько **Rust ⚡ blazing**, что все проекты переписывают на него, а нейросети стали в этом значительным помощником.
 Данная статья писалась, чтобы разобрать почему он быстрый, а также почему нет смысла переходить на него.

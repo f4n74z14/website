@@ -17,7 +17,6 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { rehypeTableWrapper } from "./src/utils/rehypeTableWrapper";
 import {
-  inlineTocDeprecation,
   rehypeInlineToc,
 } from "./src/utils/rehypeInlineToc";
 import config from "./astro-paper.config";
@@ -30,7 +29,6 @@ export default defineConfig({
       filter: page =>
         config.features?.showArchives !== false || !/\/archives\/?$/.test(page),
     }),
-    inlineTocDeprecation(),
   ],
   i18n: {
     locales: ["en", "ru"],
@@ -40,9 +38,6 @@ export default defineConfig({
     },
   },
   markdown: {
-    // Deprecated: the theme no longer uses remark-toc or remark-collapse. They
-    // stay in package.json so a customised config importing them still builds,
-    // and are removed in v8.
     processor: unified({
       rehypePlugins: [
         rehypeHeadingIds,

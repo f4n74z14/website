@@ -99,7 +99,6 @@ export const rehypeInlineToc =
     });
   };
 
-const POSTS_DIR = "src/content/posts/";
 const ATX_HEADING = /^ {0,3}#{1,6}\s+(.*?)(?:\s+#+)?\s*$/;
 const FENCE = /^ {0,3}(`{3,}|~{3,})(.*)$/;
 
@@ -119,35 +118,3 @@ const usesTocHeading = source => {
   }
   return false;
 };
-
-/**
- * Warns once per `astro dev` or `astro build` when posts still have an
- * author-written TOC heading. It reads the post files directly, so the count
- * doesn't depend on which posts get rendered.
- */
-export const inlineTocDeprecation = () => ({
-  name: "astro-paper:inline-toc",
-  hooks: {
-    "astro:config:setup": ({ config, command, isRestart, logger }) => {
-      if (isRestart || (command !== "dev" && command !== "build")) return;
-      const dir = fileURLToPath(new URL(POSTS_DIR, config.root));
-      let files;
-      try {
-        files = readdirSync(dir, { recursive: true });
-      } catch {
-        return;
-      }
-      const posts = files.filter(
-        file =>
-          /\.mdx?$/.test(file) &&
-          !basename(file).startsWith("_") &&
-          usesTocHeading(readFileSync(join(dir, file), "utf8"))
-      );
-      if (!posts.length) return;
-      logger.warn(
-        `${posts.length} post(s) still have a "## Table of contents" heading (e.g. ${POSTS_DIR}${posts[0]}). ` +
-          "It's deprecated and stops working in v8: posts now get a table of contents from the layout (features.toc), so remove the heading."
-      );
-    },
-  },
-});
