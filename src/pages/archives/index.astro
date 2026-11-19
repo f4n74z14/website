@@ -24,17 +24,45 @@ if (!config.features.showArchives && notFoundUrl) {
 }
 
 const t = useTranslations(locale);
-
-const posts = await getCollection("posts");
-const filteredPosts = posts.filter(postFilter);
 const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
 
 // Group by the calendar day the post's byline shows (see Datetime.astro),
 // not by the build machine's local zone.
-const publishDate = (post: CollectionEntry<"posts">) =>
+const toLocalDate = (post: CollectionEntry<"posts">) =>
   dayjs(post.data.pubDatetime).tz(
     resolveTimezone(post.data.timezone ?? config.site.timezone)
   );
+
+const sortByNewest = (
+  a: CollectionEntry<"posts">,
+  b: CollectionEntry<"posts">
+) =>
+  new Date(b.data.pubDatetime).getTime() -
+  new Date(a.data.pubDatetime).getTime();
+
+const posts = (await getCollection("posts")).filter(postFilter);
+
+const groupedPosts = Object.entries(
+  getPostsByGroupCondition(posts, post => toLocalDate(post).year())
+)
+  .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
+  .map(([year, yearGroup]) => {
+    const months = Object.entries(
+      getPostsByGroupCondition(yearGroup, post => toLocalDate(post).month() + 1)
+    )
+      .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
+      .map(([month, monthGroup]) => ({
+        month: Number(month),
+        label: monthFormatter.format(new Date(2000, Number(month) - 1, 1)),
+        posts: [...monthGroup].sort(sortByNewest),
+      }));
+
+    return {
+      year,
+      total: yearGroup.length,
+      months,
+    };
+  });
 ---
 
 <Layout title={`${t.pages.archivesTitle} | ${config.site.title}`}>
@@ -43,52 +71,27 @@ const publishDate = (post: CollectionEntry<"posts">) =>
   <Breadcrumb />
 
   <Main pageTitle={t.pages.archivesTitle} pageDesc={t.pages.archivesDesc}>
-    {Object.entries(
-      getPostsByGroupCondition(filteredPosts, post => publishDate(post).year())
-    )
-      .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
-      .map(([year, yearGroup]) => (
-        <div>
-          <span class="text-2xl font-bold">{year}</span>{" "}
-          <sup class="text-muted-foreground text-sm">{yearGroup.length}</sup>
-          {Object.entries(
-            getPostsByGroupCondition(
-              yearGroup,
-              post => publishDate(post).month() + 1
-            )
-          )
-            .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
-            .map(([month, monthGroup]) => (
-              <div class="flex flex-col sm:flex-row">
-                <div class="mt-6 min-w-36 text-lg sm:my-6">
-                  <span class="font-bold">
-                    {monthFormatter.format(
-                      new Date(2000, Number(month) - 1, 1)
-                    )}
-                  </span>{" "}
-                  <sup class="text-muted-foreground text-xs">
-                    {monthGroup.length}
-                  </sup>
-                </div>
-                <ul>
-                  {monthGroup
-                    .sort(
-                      (a, b) =>
-                        Math.floor(
-                          new Date(b.data.pubDatetime).getTime() / 1000
-                        ) -
-                        Math.floor(
-                          new Date(a.data.pubDatetime).getTime() / 1000
-                        )
-                    )
-                    .map(data => (
-                      <Card {...data} />
-                    ))}
-                </ul>
-              </div>
-            ))}
-        </div>
-      ))}
+    {groupedPosts.map(({ year, total, months }) => (
+      <div>
+        <span class="text-2xl font-bold">{year}</span>{" "}
+        <sup class="text-muted-foreground text-sm">{total}</sup>
+        {months.map(({ month, label, posts: monthPosts }) => (
+          <div class="flex flex-col sm:flex-row" data-month={month}>
+            <div class="mt-6 min-w-36 text-lg sm:my-6">
+              <span class="font-bold">{label}</span>{" "}
+              <sup class="text-muted-foreground text-xs">
+                {monthPosts.length}
+              </sup>
+            </div>
+            <ul>
+              {monthPosts.map(data => (
+                <Card {...data} />
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    ))}
   </Main>
 
   <Footer />
