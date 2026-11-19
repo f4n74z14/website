@@ -1,7 +1,9 @@
 export { default as Main } from "./Main.astro";
 export { default as Header } from "./Header.astro";
 export { default as Card } from "./Card.astro";
+export { default as Tag } from "./Tag.astro";
 export { default as Tooltip } from './Tooltip.astro';
+export { default as Datetime } from './Datetime.astro';
 export { default as TextRight } from './TextRight.astro';
 export { default as Breadcrumb } from "./Breadcrumb.astro";
 export { default as LinkButton } from "./LinkButton.astro";
