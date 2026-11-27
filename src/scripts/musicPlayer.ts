@@ -1,6 +1,9 @@
 import {
   buildStreamUrl,
   clamp,
+  computeFadeFactor,
+  computeProgressPercent,
+  computeSeekTime,
   createServerPool,
   fetchDiscoveryServers,
   formatTime,
@@ -106,6 +109,10 @@ function createMusicPlayer(
 
   let userVolume = getSavedVolume();
   let fadeProgress = 1;
+  let isFadingOut = false;
+  let fadeRaf = 0;
+  let fadeFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+  let fadeResolve: (() => void) | null = null;
   let fadePromise: Promise<void> | null = null;
   let isResolvingTrack = false;
   let isBuffering = false;
@@ -119,6 +126,7 @@ function createMusicPlayer(
   let streamWatchdog: ReturnType<typeof setTimeout> | null = null;
   let pendingResumeTime = 0;
   let shouldAutoPlay = false;
+  let isScrubbing = false;
 
   let lastCurrentText = "0:00";
   let lastDurationText = "0:00";
@@ -171,7 +179,7 @@ function createMusicPlayer(
   };
 
   const updatePlayerUI = () => {
-    const isPlaying = !audio.paused && !audio.ended;
+    const isPlaying = !audio.paused && !audio.ended && !isFadingOut;
     const isLoading = isResolvingTrack || isBuffering;
 
     playIcon.classList.toggle("hidden", isPlaying);
@@ -199,6 +207,7 @@ function createMusicPlayer(
   };
 
   const resetProgressUI = () => {
+    isScrubbing = false;
     progress.value = "0";
     progress.disabled = true;
     progress.style.setProperty("--progress", "0%");
@@ -206,39 +215,115 @@ function createMusicPlayer(
     setTimeText(durationLabel, "0:00", true);
   };
 
+  const cancelFade = () => {
+    if (fadeRaf) {
+      cancelAnimationFrame(fadeRaf);
+      fadeRaf = 0;
+    }
+    if (fadeFallbackTimer !== null) {
+      clearTimeout(fadeFallbackTimer);
+      fadeFallbackTimer = null;
+    }
+    isFadingOut = false;
+    fadePromise = null;
+    const resolve = fadeResolve;
+    fadeResolve = null;
+    resolve?.();
+  };
+
   const resetAudioElement = () => {
+    cancelFade();
     clearWatchdog();
     audio.pause();
     audio.removeAttribute("src");
     audio.load();
+    fadeProgress = 1;
+    audio.volume = userVolume;
   };
 
-  function fadeOutAndPause(duration = 350): Promise<void> {
-    if (audio.paused) return Promise.resolve();
-    if (fadePromise) return fadePromise;
+  function fadeIn(duration = 120): void {
+    const startFactor = fadeProgress;
+    if (startFactor >= 1) {
+      fadeProgress = 1;
+      audio.volume = userVolume;
+      return;
+    }
+
+    const startTime = performance.now();
+    const step = (now: number) => {
+      if (isFadingOut || audio.paused) {
+        fadeRaf = 0;
+        return;
+      }
+      const ratio = clamp((now - startTime) / duration);
+      fadeProgress =
+        startFactor + (1 - startFactor) * computeFadeFactor(ratio, "in");
+      audio.volume = userVolume * fadeProgress;
+
+      if (ratio < 1) {
+        fadeRaf = requestAnimationFrame(step);
+      } else {
+        fadeRaf = 0;
+        fadeProgress = 1;
+        audio.volume = userVolume;
+      }
+    };
+    fadeRaf = requestAnimationFrame(step);
+  }
+
+  function fadeOutAndPause(duration = 220): Promise<void> {
+    if (audio.paused) {
+      cancelFade();
+      fadeProgress = 1;
+      audio.volume = userVolume;
+      return Promise.resolve();
+    }
+    if (isFadingOut && fadePromise) return fadePromise;
+
+    cancelFade();
+    isFadingOut = true;
+    updatePlayerUI();
+
+    const startFactor = fadeProgress;
+    const startTime = performance.now();
 
     fadePromise = new Promise(resolve => {
-      const startTime = performance.now();
+      fadeResolve = resolve;
 
-      function step(now: number) {
-        const progressRatio = Math.min((now - startTime) / duration, 1);
-        fadeProgress = 1 - progressRatio;
-        audio.volume = userVolume * fadeProgress;
-
-        if (progressRatio < 1) {
-          requestAnimationFrame(step);
-          return;
+      const finish = () => {
+        if (fadeRaf) {
+          cancelAnimationFrame(fadeRaf);
+          fadeRaf = 0;
         }
-
+        if (fadeFallbackTimer !== null) {
+          clearTimeout(fadeFallbackTimer);
+          fadeFallbackTimer = null;
+        }
         audio.pause();
+        isFadingOut = false;
         fadeProgress = 1;
         audio.volume = userVolume;
         fadePromise = null;
+        fadeResolve = null;
         updatePlayerUI();
         resolve();
-      }
+      };
 
-      requestAnimationFrame(step);
+      const step = (now: number) => {
+        const progressRatio = clamp((now - startTime) / duration);
+        fadeProgress =
+          startFactor * computeFadeFactor(progressRatio, "out");
+        audio.volume = userVolume * fadeProgress;
+
+        if (progressRatio < 1) {
+          fadeRaf = requestAnimationFrame(step);
+          return;
+        }
+        finish();
+      };
+
+      fadeFallbackTimer = setTimeout(finish, duration + 50);
+      fadeRaf = requestAnimationFrame(step);
     });
 
     return fadePromise;
@@ -268,30 +353,117 @@ function createMusicPlayer(
     const hasDuration = Number.isFinite(duration) && duration > 0;
 
     progress.disabled = !hasDuration;
-    progress.value = hasDuration
-      ? String((audio.currentTime / duration) * 100)
-      : "0";
-    progress.style.setProperty("--progress", `${progress.value}%`);
-
-    setTimeText(currentLabel, formatTime(audio.currentTime), false);
     if (hasDuration) {
       setTimeText(durationLabel, formatTime(duration), true);
     }
+
+    if (isScrubbing || audio.seeking) return;
+
+    const percentage = hasDuration
+      ? computeProgressPercent(audio.currentTime, duration)
+      : 0;
+    progress.value = String(percentage);
+    progress.style.setProperty("--progress", `${percentage}%`);
+    setTimeText(currentLabel, formatTime(audio.currentTime), false);
   }
 
-  progress.addEventListener("input", () => {
+  function previewSeek(): number | null {
     const duration = audio.duration;
-    if (!Number.isFinite(duration) || duration <= 0) return;
+    if (!Number.isFinite(duration) || duration <= 0) return null;
     const percentage = clamp(Number(progress.value), 0, 100);
-    const time = (percentage / 100) * duration;
-    audio.currentTime = time;
+    const time = computeSeekTime(percentage, duration);
     progress.style.setProperty("--progress", `${percentage}%`);
     setTimeText(currentLabel, formatTime(time), false);
+    return time;
+  }
+
+  function commitSeek(): void {
+    const time = previewSeek();
+    if (time !== null) {
+      audio.currentTime = time;
+    }
+  }
+
+  progress.addEventListener("pointerdown", () => {
+    if (!progress.disabled) {
+      isScrubbing = true;
+    }
+  });
+
+  progress.addEventListener("input", () => {
+    const time = previewSeek();
+    if (!isScrubbing && time !== null) {
+      audio.currentTime = time;
+    }
+  });
+
+  progress.addEventListener("change", () => {
+    isScrubbing = false;
+    commitSeek();
+  });
+
+  progress.addEventListener("pointercancel", () => {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    updateProgress();
+  });
+
+  progress.addEventListener("pointerup", () => {
+    requestAnimationFrame(() => {
+      if (!isScrubbing) return;
+      isScrubbing = false;
+      updateProgress();
+    });
+  });
+
+  progress.addEventListener("blur", () => {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    updateProgress();
+  });
+
+  progress.addEventListener("keydown", event => {
+    const duration = audio.duration;
+    if (progress.disabled || !Number.isFinite(duration) || duration <= 0) {
+      return;
+    }
+
+    let targetTime: number | null = null;
+    if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+      targetTime = clamp(audio.currentTime - 5, 0, duration);
+    } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+      targetTime = clamp(audio.currentTime + 5, 0, duration);
+    } else if (event.key === "Home") {
+      targetTime = 0;
+    } else if (event.key === "End") {
+      targetTime = duration;
+    }
+
+    if (targetTime === null) return;
+    event.preventDefault();
+    isScrubbing = false;
+    audio.currentTime = targetTime;
+    const percentage = computeProgressPercent(targetTime, duration);
+    progress.value = String(percentage);
+    progress.style.setProperty("--progress", `${percentage}%`);
+    setTimeText(currentLabel, formatTime(targetTime), false);
   });
 
   async function playAudio(): Promise<void> {
     if (isResolvingTrack || !audio.hasAttribute("src")) return;
     if (audio.ended) audio.currentTime = 0;
+
+    if (isFadingOut) {
+      cancelFade();
+      updatePlayerUI();
+    }
+    if (fadeProgress < 1) {
+      fadeIn(120);
+    } else {
+      audio.volume = userVolume;
+    }
+
+    if (!audio.paused) return;
 
     try {
       await audio.play();
@@ -387,6 +559,7 @@ function createMusicPlayer(
 
   audio.addEventListener("durationchange", updateProgress);
   audio.addEventListener("timeupdate", updateProgress);
+  audio.addEventListener("seeked", updateProgress);
 
   audio.addEventListener("play", updatePlayerUI);
   audio.addEventListener("pause", () => {
@@ -429,7 +602,7 @@ function createMusicPlayer(
 
     if (!audio.hasAttribute("src")) return;
 
-    if (audio.paused) {
+    if (audio.paused || isFadingOut) {
       shouldAutoPlay = true;
       void playAudio();
     } else {
@@ -455,17 +628,12 @@ function createMusicPlayer(
     attemptedStreamServers = new Set();
     pendingResumeTime = 0;
     shouldAutoPlay = true;
-    updatePlayerUI();
-
-    await fadeOutAndPause(300);
-    if (currentRequest !== requestId) return;
-
-    resetAudioElement();
     audio.dataset.track = trackUrl;
     audio.loop = loop;
     resetProgressUI();
     updatePlayerUI();
 
+    const fadeDone = fadeOutAndPause(180);
     void warmDiscovery();
 
     try {
@@ -496,7 +664,9 @@ function createMusicPlayer(
         resolvedTracks.set(trackUrl, trackId);
       }
 
+      await fadeDone;
       if (currentRequest !== requestId) return;
+      resetAudioElement();
       resolveController = null;
       isResolvingTrack = false;
 
@@ -550,33 +720,33 @@ function createMusicPlayer(
     isBuffering = false;
     hasError = false;
     shouldAutoPlay = false;
-
-    await fadeOutAndPause(250);
-    if (closeRequest !== requestId) return;
-
-    resetAudioElement();
     delete audio.dataset.track;
     activeTrackId = null;
     activeStreamServer = null;
     audio.loop = false;
+    hidePlayer();
+
+    await fadeOutAndPause(200);
+    if (closeRequest !== requestId) return;
+
+    resetAudioElement();
     resetProgressUI();
     updatePlayerUI();
-    hidePlayer();
   });
 
   function beforeSwap(newDocument?: Document) {
-    requestId++;
+    const swapRequest = ++requestId;
     resolveController?.abort();
     resolveController = null;
     clearWatchdog();
     isResolvingTrack = false;
     isBuffering = false;
+    hasError = false;
     shouldAutoPlay = false;
-    audio.pause();
-
-    if (audio.readyState > 0 && Number.isFinite(audio.duration)) {
-      audio.currentTime = 0;
-    }
+    delete audio.dataset.track;
+    activeTrackId = null;
+    activeStreamServer = null;
+    audio.loop = false;
 
     const nextI18n = newDocument?.getElementById("music-player")?.dataset.i18n;
     if (nextI18n) {
@@ -586,8 +756,16 @@ function createMusicPlayer(
     }
 
     hidePlayer();
-    updateProgress();
+    resetProgressUI();
     updatePlayerUI();
+
+    if (!audio.paused) {
+      void fadeOutAndPause(200).then(() => {
+        if (swapRequest === requestId) resetAudioElement();
+      });
+    } else {
+      resetAudioElement();
+    }
   }
 
   progress.disabled = true;
@@ -631,14 +809,6 @@ document.addEventListener("astro:before-swap", event => {
   activePlayer?.beforeSwap((event as { newDocument?: Document }).newDocument);
 });
 
-document.addEventListener("astro:before-preparation", event => {
-  const navigationEvent = event as Event & { loader: () => Promise<void> };
-  const originalLoader = navigationEvent.loader;
-
-  navigationEvent.loader = async () => {
-    await Promise.all([
-      originalLoader(),
-      activePlayer?.fadeOutAndPause(400) ?? Promise.resolve(),
-    ]);
-  };
+document.addEventListener("astro:before-preparation", () => {
+  void activePlayer?.fadeOutAndPause(200);
 });

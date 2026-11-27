@@ -2,6 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildStreamUrl,
+  computeFadeFactor,
+  computeProgressPercent,
+  computeSeekTime,
   createServerPool,
   fetchDiscoveryServers,
   formatTime,
@@ -120,4 +123,28 @@ test("formatTime handles finite and non-finite inputs", () => {
   assert.equal(formatTime(65), "1:05");
   assert.equal(formatTime(-5), "0:00");
   assert.equal(formatTime(NaN), "0:00");
+});
+
+test("computeFadeFactor applies perceptual ease-out curves and clamps inputs", () => {
+  assert.equal(computeFadeFactor(0, "out"), 1);
+  assert.equal(computeFadeFactor(0.5, "out"), 0.25);
+  assert.equal(computeFadeFactor(1, "out"), 0);
+  assert.equal(computeFadeFactor(-1, "out"), 1);
+  assert.equal(computeFadeFactor(2, "out"), 0);
+
+  assert.equal(computeFadeFactor(0, "in"), 0);
+  assert.equal(computeFadeFactor(0.5, "in"), 0.75);
+  assert.equal(computeFadeFactor(1, "in"), 1);
+});
+
+test("computeProgressPercent and computeSeekTime preserve sub-percent precision", () => {
+  assert.equal(computeProgressPercent(12.34, 200), 6.17);
+  assert.equal(computeProgressPercent(250, 200), 100);
+  assert.equal(computeProgressPercent(10, 0), 0);
+  assert.equal(computeProgressPercent(NaN, 200), 0);
+
+  assert.equal(computeSeekTime(6.17, 200), 12.34);
+  assert.equal(computeSeekTime(150, 200), 200);
+  assert.equal(computeSeekTime(-10, 200), 0);
+  assert.equal(computeSeekTime(50, NaN), 0);
 });

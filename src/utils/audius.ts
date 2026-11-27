@@ -12,6 +12,40 @@ const REQUEST_TIMEOUT_MS = 4500;
 export const clamp = (value: number, min = 0, max = 1): number =>
   Math.min(max, Math.max(min, value));
 
+export function computeFadeFactor(
+  progress: number,
+  direction: "in" | "out"
+): number {
+  const t = clamp(progress);
+  const inv = 1 - t;
+  return direction === "out" ? inv * inv : 1 - inv * inv;
+}
+
+export function computeProgressPercent(
+  currentTime: number,
+  duration: number
+): number {
+  if (
+    !Number.isFinite(duration) ||
+    duration <= 0 ||
+    !Number.isFinite(currentTime)
+  ) {
+    return 0;
+  }
+  return clamp((currentTime / duration) * 100, 0, 100);
+}
+
+export function computeSeekTime(percent: number, duration: number): number {
+  if (
+    !Number.isFinite(duration) ||
+    duration <= 0 ||
+    !Number.isFinite(percent)
+  ) {
+    return 0;
+  }
+  return (clamp(percent, 0, 100) / 100) * duration;
+}
+
 export function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const minutes = Math.floor(seconds / 60);
