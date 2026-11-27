@@ -4,6 +4,8 @@ import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
 import config from "@/config";
 import "@/styles/global.css";
+import CustomHead from "@/custom/Head.astro";
+import CustomBodyEnd from "@/custom/BodyEnd.astro";
 
 type Props = {
   title?: string;
@@ -30,7 +32,7 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 <html
   dir={site.dir ?? "ltr"}
   lang={Astro.currentLocale ?? site.lang}
-  class="overflow-y-scroll scroll-smooth"
+  class="overflow-y-scroll motion-safe:scroll-smooth"
 >
   <head>
     <meta charset="UTF-8" />
@@ -75,7 +77,8 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
       (function () {
         let stored = null;
         try {
-          stored = localStorage.getItem("theme");
+          const val = localStorage.getItem("theme");
+          if (val === "light" || val === "dark") stored = val;
         } catch {}
         const prefersDark = window.matchMedia(
           "(prefers-color-scheme: dark)"
@@ -90,6 +93,8 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     </script>
 
     <ClientRouter />
+
+    <CustomHead {title} {description} />
   </head>
   <body class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col">
     <slot />
@@ -97,5 +102,6 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
       import "@/scripts/theme";
       import "@/scripts/navigation";
     </script>
+    <CustomBodyEnd />
   </body>
 </html>

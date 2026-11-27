@@ -167,6 +167,27 @@
 
 <audio id="music-audio" transition:persist="music-audio" preload="none"></audio>
 
+<style is:global>
+  :root {
+    --music-player-height: 0px;
+  }
+
+  :root:has(#music-player[data-open="true"]) {
+    --music-player-height: calc(53px + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 640px) {
+    :root:has(#music-player[data-open="true"]) {
+      --music-player-height: calc(57px + env(safe-area-inset-bottom));
+    }
+  }
+
+  body:has(#music-player) {
+    padding-block-end: var(--music-player-height);
+    transition: padding-block-end 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+</style>
+
 <style>
   #music-player {
     transform: translate3d(0, 100%, 0);
@@ -386,6 +407,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    :global(body:has(#music-player)),
     #music-player,
     .music-icon-button,
     .music-range::-webkit-slider-thumb,

@@ -45,14 +45,7 @@ const withToc = items.length > 0;
 
   /* Player is open: move FAB above it. */
   :root:has(#music-player[data-open="true"]) {
-    --post-fab-bottom: calc(53px + env(safe-area-inset-bottom) + 1rem);
-  }
-
-  /* Desktop player is 4px taller. */
-  @media (min-width: 640px) {
-    :root:has(#music-player[data-open="true"]) {
-      --post-fab-bottom: calc(57px + env(safe-area-inset-bottom) + 1rem);
-    }
+    --post-fab-bottom: calc(var(--music-player-height) + 1rem);
   }
 
   .post-fab {

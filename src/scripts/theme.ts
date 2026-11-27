@@ -1,6 +1,18 @@
-const THEME_KEY = "theme";
-const LIGHT = "light";
-const DARK = "dark";
+import {
+  DARK,
+  LIGHT,
+  THEME_KEY,
+  getThemeOverride,
+  isTheme,
+  resolveTheme,
+  type Theme,
+} from "@/utils/theme";
+
+const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+function getSystemTheme(): Theme {
+  return colorSchemeQuery.matches ? DARK : LIGHT;
+}
 
 function getStoredTheme(): string | null {
   try {
@@ -10,22 +22,22 @@ function getStoredTheme(): string | null {
   }
 }
 
-function getPreferredTheme(): string {
-  const stored = getStoredTheme();
-  if (stored === LIGHT || stored === DARK) return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? DARK
-    : LIGHT;
-}
-
 // Reuse the value already set by the inline FOUC-prevention script if available.
-let themeValue: string =
-  (window as unknown as { __theme?: { value: string } }).__theme?.value ??
-  getPreferredTheme();
+const preloadedTheme = (window as unknown as { __theme?: { value?: string } })
+  .__theme?.value;
+
+let themeValue: Theme = isTheme(preloadedTheme)
+  ? preloadedTheme
+  : resolveTheme(getStoredTheme(), colorSchemeQuery.matches);
 
 function persist(): void {
+  const override = getThemeOverride(themeValue, getSystemTheme());
   try {
-    localStorage.setItem(THEME_KEY, themeValue);
+    if (override) {
+      localStorage.setItem(THEME_KEY, override);
+    } else {
+      localStorage.removeItem(THEME_KEY);
+    }
   } catch {
     // Storage may be unavailable in restricted contexts.
   }
@@ -69,9 +81,7 @@ document.addEventListener("astro:before-swap", event => {
   }
 });
 
-window
-  .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", ({ matches }) => {
-    themeValue = matches ? DARK : LIGHT;
-    persist();
-  });
+colorSchemeQuery.addEventListener("change", ({ matches }) => {
+  themeValue = matches ? DARK : LIGHT;
+  persist();
+});
