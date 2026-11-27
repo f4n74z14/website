@@ -65,14 +65,6 @@ type OgCardOptions = {
   footerRight?: string;
 };
 
-function escapeHtml(text: string): string {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
 export async function renderOgCard({
   title,
   description,
@@ -82,10 +74,6 @@ export async function renderOgCard({
 }: OgCardOptions): Promise<Response> {
   const bgDataUri = getBackgroundDataUri();
   const hasBothFooter = Boolean(footerLeft && footerRight);
-  const safeTitle = escapeHtml(title);
-  const safeDescription = description ? escapeHtml(description) : undefined;
-  const safeLeft = footerLeft ? escapeHtml(footerLeft) : undefined;
-  const safeRight = footerRight ? escapeHtml(footerRight) : undefined;
 
   const markup = html`
     <div style="
@@ -115,16 +103,16 @@ export async function renderOgCard({
         <div style="
           font-size: ${titleSize}px;
           font-weight: 700;
-          margin-bottom: ${safeDescription ? "24px" : "0"};
-          line-height: ${safeDescription ? "1.1" : "1.15"};
-          ${safeDescription ? "" : "max-height: 220px; overflow: hidden;"}
+          margin-bottom: ${description ? "24px" : "0"};
+          line-height: ${description ? "1.1" : "1.15"};
+          ${description ? "" : "max-height: 220px; overflow: hidden;"}
           color: ${nord[6]};
         ">
-          ${safeTitle}
+          ${title}
         </div>
         ${
-          safeDescription
-            ? `<div style="font-size: 28px; color: ${nord[4]}; line-height: 1.4;">${safeDescription}</div>`
+          description
+            ? `<div style="font-size: 28px; color: ${nord[4]}; line-height: 1.4;">${description}</div>`
             : ""
         }
       </div>
@@ -138,8 +126,8 @@ export async function renderOgCard({
         font-weight: 700;
         color: ${nord[8]};
       ">
-        ${safeLeft ? `<span>${safeLeft}</span>` : ""}
-        ${safeRight ? `<span>${safeRight}</span>` : ""}
+        ${footerLeft ? `<span>${footerLeft}</span>` : ""}
+        ${footerRight ? `<span>${footerRight}</span>` : ""}
       </div>
     </div>
   `;
