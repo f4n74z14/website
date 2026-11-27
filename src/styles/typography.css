@@ -31,8 +31,9 @@
         font-weight: 400;
     }
 
-    a:not([data-footnote-ref]):not([data-footnote-backref])  {
-      @apply text-accent hover:opacity-80 wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
+    a:not([data-footnote-ref]):not([data-footnote-backref]) {
+      @apply text-accent hover:text-accent/80 wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
+      transition: color var(--duration-ui) var(--ease-out-expo);
     }
 
     a[data-footnote-ref] {

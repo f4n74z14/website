@@ -68,7 +68,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   #main-content {
-    animation: page-enter var(--duration-enter) var(--ease-out-expo) both;
+    animation: fade-in var(--duration-enter) var(--ease-out-expo) both;
   }
 
   ::view-transition-old(root) {

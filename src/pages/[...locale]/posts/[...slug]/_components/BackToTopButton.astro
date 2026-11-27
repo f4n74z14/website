@@ -59,6 +59,7 @@ const withToc = items.length > 0;
     transition:
       opacity 260ms cubic-bezier(0.16, 1, 0.3, 1),
       translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
       inset-block-end 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
       visibility 260ms linear;
   }
@@ -66,6 +67,9 @@ const withToc = items.length > 0;
     opacity: 1;
     translate: 0;
     visibility: visible;
+  }
+  .post-fab[data-visible]:has(.post-fab-btn:active) {
+    transform: scale(0.94);
   }
   .post-fab-btn {
     position: relative;
@@ -82,12 +86,8 @@ const withToc = items.length > 0;
       0 10px 15px -3px rgb(0 0 0 / 0.15),
       0 4px 6px -4px rgb(0 0 0 / 0.15);
     transition:
-      transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
       color 160ms cubic-bezier(0.16, 1, 0.3, 1),
       box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .post-fab-btn:active {
-    transform: scale(0.94);
   }
   /* The ring is the scroll progress: a 4px accent arc over a 2px track, showing
      through the button's transparent border. Accent and track have similar
@@ -106,15 +106,18 @@ const withToc = items.length > 0;
         var(--fab-track) 0 calc(100% - 2px),
         transparent 0
       );
+    mask: radial-gradient(closest-side, transparent calc(100% - 4px), #000 calc(100% - 3.5px));
   }
   /* Only with a real pointer: on touch screens hover sticks after a tap. */
   @media (hover: hover) {
-    .post-fab-btn:hover {
-      color: var(--color-accent);
+    .post-fab[data-visible]:has(.post-fab-btn:hover) {
       transform: translateY(-2px);
     }
-    .post-fab-btn:hover:active {
+    .post-fab[data-visible]:has(.post-fab-btn:hover:active) {
       transform: scale(0.94);
+    }
+    .post-fab-btn:hover {
+      color: var(--color-accent);
     }
   }
   /* Dashed, so it doesn't read as a second progress ring. The offset clears the
@@ -203,8 +206,8 @@ const withToc = items.length > 0;
     .post-fab {
       translate: none;
     }
-    .post-fab-btn:hover,
-    .post-fab-btn:active {
+    .post-fab[data-visible]:has(.post-fab-btn:hover),
+    .post-fab[data-visible]:has(.post-fab-btn:active) {
       transform: none !important;
     }
   }
