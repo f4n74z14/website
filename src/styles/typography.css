@@ -148,6 +148,7 @@
   @font-face {
     font-family: "Ubuntu Mono";
     src: url("/fonts/UbuntuMono-Regular.woff2") format("woff2");
+    font-display: swap;
   }
 
   pre,
@@ -157,21 +158,28 @@
   }
 
   .astro-code {
-    @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    @apply outline-border flex border text-(--shiki-light) [&_span]:text-(--shiki-light);
+    background-color: color-mix(in srgb, var(--nord-0) 76%, black 24%);
+
+    span[style*="#616E88"] {
+      --shiki-light: #909eb8 !important;
+      --shiki-dark: #909eb8 !important;
+    }
   }
 
   html[data-theme="dark"] .astro-code {
-    @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    @apply text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    background-color: color-mix(in srgb, var(--nord-0) 76%, black 24%);
   }
 
   /* Styles for Shiki transformers */
   /* https://shiki.style/packages/transformers */
   .astro-code {
     .line.diff.add {
-      @apply relative inline-block w-full bg-nord-14/20 before:absolute before:-left-3 before:text-nord-14 before:content-['+'];
+      @apply relative inline-block w-full bg-nord-14/[0.08] before:absolute before:-left-3 before:text-nord-14 before:content-['+'];
     }
     .line.diff.remove {
-      @apply relative inline-block w-full bg-nord-11/20 before:absolute before:-left-3 before:text-nord-11 before:content-['-'];
+      @apply relative inline-block w-full bg-nord-11/[0.08] before:absolute before:-left-3 before:text-nord-11 before:content-['-'];
     }
     .line.highlighted {
       @apply inline-block w-full bg-nord-3/30;

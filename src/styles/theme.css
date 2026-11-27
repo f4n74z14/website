@@ -63,8 +63,8 @@
 
   --accent: color-mix(
     in srgb,
-    var(--nord-10) 75%,
-    var(--nord-0) 25%
+    var(--nord-10) 65%,
+    var(--nord-0) 35%
   );
   --accent-foreground: var(--nord-6);
 

@@ -244,7 +244,7 @@ function initPostPage(): void {
   popover?.addEventListener("toggle", onPopoverToggle);
   window.addEventListener("scroll", schedule, { passive: true });
   window.addEventListener("resize", schedule, { passive: true });
-  updateAll();
+  schedule();
 
   cleanupPost = () => {
     cleanupLightbox();
