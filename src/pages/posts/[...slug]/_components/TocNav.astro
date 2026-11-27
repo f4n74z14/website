@@ -1,0 +1,25 @@
+---
+import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
+import { useTranslations } from "@/i18n";
+import type { TocItem } from "@/utils/buildTocTree";
+import TocList from "./TocList.astro";
+
+type Props = {
+  items: TocItem[];
+  labelId: string;
+};
+
+const { items, labelId } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+---
+
+<nav aria-labelledby={labelId} data-toc-nav>
+  <h2 id={labelId} class="toc-label">
+    {t.post.tableOfContents}
+  </h2>
+  <TocList {items} />
+  <button type="button" class="toc-back-to-top" data-back-to-top>
+    <IconArrowNarrowUp class="size-4" aria-hidden="true" />
+    {t.post.backToTop}
+  </button>
+</nav>

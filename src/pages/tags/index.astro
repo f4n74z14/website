@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "@/layouts/Layout.astro";
-import { Header, Footer, Breadcrumb, Main, Tag } from "@/components";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { Tag } from "@/components";
 import { getUniqueTags } from "@/utils/getUniqueTags";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -13,18 +13,14 @@ const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 ---
 
-<Layout title={`${t.pages.tagsTitle} | ${config.site.title}`}>
-  <Header />
-
-  <Breadcrumb />
-
-  <Main pageTitle={t.pages.tagsTitle} pageDesc={t.pages.tagsDesc}>
-    <ul class="flex flex-wrap gap-6">
-      {tags.map(({ tag, tagName }) => (
-        <Tag {tag} {tagName} />
-      ))}
-    </ul>
-  </Main>
-
-  <Footer />
-</Layout>
+<PageLayout
+  title={`${t.pages.tagsTitle} | ${config.site.title}`}
+  pageTitle={t.pages.tagsTitle}
+  pageDesc={t.pages.tagsDesc}
+>
+  <ul class="flex flex-wrap gap-6">
+    {tags.map(({ tag, tagName }) => (
+      <Tag {tag} {tagName} />
+    ))}
+  </ul>
+</PageLayout>

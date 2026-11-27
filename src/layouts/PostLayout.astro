@@ -1,5 +1,7 @@
 ---
 import Layout from "./Layout.astro";
+import { Header, Footer, MusicPlayer } from "@/components";
+import BackButton from "@/pages/posts/[...slug]/_components/BackButton.astro";
 import config from "@/config";
 
 type Props = {
@@ -40,11 +42,8 @@ const structuredDataJson = JSON.stringify(structuredData).replace(
 );
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL}>
+<Layout {title} {description} {ogImage} {canonicalURL} ogType="article">
   <Fragment slot="head">
-    <!-- Override og:type for article pages -->
-    <meta property="og:type" content="article" />
-
     {
       pubDatetime && (
         <meta
@@ -69,5 +68,16 @@ const structuredDataJson = JSON.stringify(structuredData).replace(
     />
   </Fragment>
 
+  <div class="progress-container bg-background fixed top-0 z-10 h-1 w-full">
+    <div class="progress-bar bg-accent h-1 w-0" id="myBar"></div>
+  </div>
+
+  <Header />
+
+  <BackButton />
+
   <slot />
+
+  <Footer />
+  <MusicPlayer />
 </Layout>

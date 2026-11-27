@@ -1,4 +1,4 @@
-const base = import.meta.env.BASE_URL.replace(/\/+$/, "");
+const base = (import.meta.env?.BASE_URL ?? "").replace(/\/+$/, "");
 const baseRoot = base === "" ? "/" : `${base}/`;
 
 /**
@@ -44,3 +44,12 @@ export function getAssetPath(path: string): string {
   }
   return baseRoot + normalizedPath;
 }
+
+/**
+ * Validates that a stored path (e.g. sessionStorage backUrl) is a safe
+ * same-origin relative path, blocking protocol-relative URLs or schemes.
+ */
+export function isSafeInternalPath(path: string | null | undefined): path is string {
+  return typeof path === "string" && path.startsWith("/") && !path.startsWith("//");
+}
+

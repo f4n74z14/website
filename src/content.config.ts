@@ -36,6 +36,7 @@ const pages = defineCollection({
     description: z.string().optional(),
     ogImage: z.string().optional(),
     canonicalURL: z.string().optional(),
+    musicPlayer: z.boolean().optional(),
   }),
 });
 

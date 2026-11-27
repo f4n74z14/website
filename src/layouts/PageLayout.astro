@@ -1,0 +1,54 @@
+---
+import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import Layout from "./Layout.astro";
+import {
+  Header,
+  Breadcrumb,
+  Main,
+  Pagination,
+  Footer,
+  MusicPlayer,
+} from "@/components";
+
+type Props = {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonicalURL?: string;
+  pageTitle: string | [string, string];
+  pageDesc?: string;
+  mainClass?: string;
+  page?: Page<CollectionEntry<"posts">>;
+  showBreadcrumb?: boolean;
+  withMusicPlayer?: boolean;
+};
+
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  pageTitle,
+  pageDesc,
+  mainClass,
+  page,
+  showBreadcrumb = true,
+  withMusicPlayer = false,
+} = Astro.props;
+---
+
+<Layout {title} {description} {ogImage} {canonicalURL}>
+  <Header />
+
+  {showBreadcrumb && <Breadcrumb />}
+
+  <Main {pageTitle} {pageDesc} class={mainClass}>
+    <slot />
+  </Main>
+
+  {page && <Pagination {page} />}
+
+  <Footer noMarginTop={page ? page.lastPage > 1 : false} />
+  {withMusicPlayer && <MusicPlayer />}
+</Layout>
