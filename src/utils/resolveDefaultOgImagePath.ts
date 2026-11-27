@@ -1,4 +1,5 @@
 import type { ResolvedAstroPaperConfig } from "@/types/config";
+import { DEFAULT_LOCALE, resolveLocale } from "@/i18n/locales";
 import { getAssetPath } from "./withBase";
 
 const publicFiles = import.meta.glob("/public/*", {
@@ -22,7 +23,8 @@ function existsInPublic(filename: string): boolean {
  * - When disabled, requires `public/{site.ogImage}` to exist.
  */
 export function resolveDefaultOgImagePath(
-  config: ResolvedAstroPaperConfig
+  config: ResolvedAstroPaperConfig,
+  locale?: string
 ): string {
   const filename = config.site.ogImage;
   if (
@@ -36,9 +38,11 @@ export function resolveDefaultOgImagePath(
   }
 
   if (config.features.dynamicOgImage) {
-    return existsInPublic(filename)
-      ? getAssetPath(filename)
-      : getAssetPath("og.png");
+    if (existsInPublic(filename)) return getAssetPath(filename);
+    const resolved = resolveLocale(locale);
+    return resolved === DEFAULT_LOCALE
+      ? getAssetPath("og.png")
+      : getAssetPath(`${resolved}/og.png`);
   }
 
   if (!existsInPublic(filename)) {

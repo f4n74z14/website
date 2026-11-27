@@ -10,12 +10,14 @@ import {
   Footer,
   MusicPlayer,
 } from "@/components";
+import type { Locale } from "@/i18n";
 
 type Props = {
   title?: string;
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  localeAlternates?: Partial<Record<Locale, string>>;
   pageTitle: string | [string, string];
   pageDesc?: string;
   mainClass?: string;
@@ -29,6 +31,7 @@ const {
   description,
   ogImage,
   canonicalURL,
+  localeAlternates,
   pageTitle,
   pageDesc,
   mainClass,
@@ -38,8 +41,8 @@ const {
 } = Astro.props;
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL}>
-  <Header />
+<Layout {title} {description} {ogImage} {canonicalURL} {localeAlternates}>
+  <Header {localeAlternates} />
 
   {showBreadcrumb && <Breadcrumb />}
 

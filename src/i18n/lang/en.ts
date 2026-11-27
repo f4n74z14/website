@@ -1,6 +1,10 @@
 import type { UIStrings } from "../types";
 
 export default {
+  site: {
+    title: "Limit of fantazia",
+    description: "A small blog by a small person",
+  },
   nav: {
     home: "Home",
     posts: "Posts",
@@ -31,10 +35,20 @@ export default {
     page: "Page",
   },
   home: {
+    heroTitle: "Welcome!",
+    heroParagraphs: [
+      "Glad you stopped by.",
+      "This blog is just a small personal project. It collects interesting thoughts and notes I want to share with others without losing them.",
+      "The mood of this place feels like an unhurried evening chat around a table.",
+    ],
     socialLinks: "Social Links",
     featured: "Featured",
     recentPosts: "Recent Posts",
     allPosts: "All Posts",
+  },
+  socials: {
+    email: "Send an email to {{site}}",
+    profile: "{{site}} on {{platform}}",
   },
   footer: {
     copyright: "Copyright",
@@ -55,10 +69,27 @@ export default {
 
     searchTitle: "Search",
     searchDesc: "Search any article ...",
+    searchDevWarningTitle: "DEV mode Warning!",
+    searchDevWarningBody:
+      "You need to build the project at least once to see search results during development:",
+  },
+  music: {
+    play: "Play",
+    pause: "Pause",
+    retry: "Retry audio",
+    serverUnavailable: "Audio server unavailable — click to retry",
+    playbackPosition: "Playback position",
+    loading: "Loading audio",
+    volume: "Volume",
+    openOnAudius: "Open on Audius",
+    close: "Close player",
   },
   a11y: {
     skipToContent: "Skip to content",
     skipTableOfContents: "Skip table of contents",
+    breadcrumb: "Breadcrumb",
+    pagination: "Pagination Navigation",
+    switchLanguage: "Switch language",
     openMenu: "Open menu",
     closeMenu: "Close menu",
     toggleTheme: "Toggle theme",
@@ -78,6 +109,7 @@ export default {
   notFound: {
     title: "404 Not Found",
     message: "Page Not Found",
+    imageAlt: "Pingu",
     goHome: "Go back home",
   },
 } satisfies UIStrings;

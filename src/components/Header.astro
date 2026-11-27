@@ -9,16 +9,27 @@ import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconX from "@/assets/icons/IconX.svg";
 import LinkButton from "./LinkButton.astro";
 import { stripBase, stripLocale } from "@/utils/withBase";
-import { useTranslations } from "@/i18n";
+import {
+  LOCALES,
+  LOCALE_LABELS,
+  resolveLocale,
+  useTranslations,
+  type Locale,
+} from "@/i18n";
+import { switchLocalePath } from "@/utils/localeUrl";
 import config from "@/config";
 
-const { site, features } = config;
+type Props = {
+  localeAlternates?: Partial<Record<Locale, string>>;
+};
 
-const locale = Astro.currentLocale ?? config.site.lang;
+const { localeAlternates } = Astro.props;
+const { features } = config;
+
+const locale = resolveLocale(Astro.currentLocale ?? config.site.lang);
 const t = useTranslations(locale);
 
 // Strip the base prefix so isActive comparisons work regardless of deploy subdirectory.
-// e.g. with base "/blog": "/blog/posts/slug" → "/posts/slug"
 const relativePath = stripBase(Astro.url.pathname);
 const pathWithoutTrailingSlash =
   relativePath.endsWith("/") && relativePath !== "/"
@@ -32,6 +43,10 @@ const isActive = (path: string) => {
   const pathArray = path.split("/").filter(p => p.trim());
   return currentPath === path || currentPathArray[0] === pathArray[0];
 };
+
+const getLanguageHref = (targetLocale: Locale) =>
+  localeAlternates?.[targetLocale] ??
+  switchLocalePath(relativePath, locale, targetLocale);
 ---
 
 <a
@@ -52,7 +67,7 @@ const isActive = (path: string) => {
       href={getRelativeLocaleUrl(locale, "")}
       class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
-      {site.title}
+      {t.site.title}
     </a>
     <nav
       id="nav-menu"
@@ -159,6 +174,50 @@ const isActive = (path: string) => {
             </li>
           )
         }
+        <li class="col-span-2 flex items-center justify-center sm:col-span-1">
+          <div
+            class="flex items-center gap-1 text-sm font-medium"
+            role="group"
+            aria-label={t.a11y.switchLanguage}
+          >
+            {
+              LOCALES.map((loc, idx) => {
+                const isCurrent = loc === locale;
+                const { code, nativeName } = LOCALE_LABELS[loc];
+                return (
+                  <>
+                    {idx > 0 && (
+                      <span
+                        aria-hidden="true"
+                        class="text-muted-foreground/60 select-none"
+                      >
+                        /
+                      </span>
+                    )}
+                    {isCurrent ? (
+                      <span
+                        aria-current="true"
+                        class="text-accent px-1 py-0.5 font-semibold"
+                      >
+                        {code}
+                      </span>
+                    ) : (
+                      <a
+                        href={getLanguageHref(loc)}
+                        hreflang={loc}
+                        aria-label={`${t.a11y.switchLanguage}: ${nativeName}`}
+                        title={nativeName}
+                        class="hover:text-accent focus-outline px-1 py-0.5 opacity-75 transition-opacity hover:opacity-100"
+                      >
+                        {code}
+                      </a>
+                    )}
+                  </>
+                );
+              })
+            }
+          </div>
+        </li>
       </ul>
     </nav>
   </div>

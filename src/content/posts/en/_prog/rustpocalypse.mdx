@@ -1,0 +1,85 @@
+---
+author: fantazia
+pubDatetime: 2026-11-12T22:49:33Z
+modDatetime: 2026-11-21T06:42:55Z
+title: Hitchhiker's Guide to Programming Languages
+postSlug: rustpocalypse
+featured: true
+draft: false
+tags:
+  - programming
+  - trends
+  - inefficiency
+description: Scammers called grandma and talked her into rewriting the house in Rust
+---
+import { Tooltip, MusicLink, TextRight } from '@/components';
+
+<TextRight>
+    <MusicLink
+      href="https://audius.co/obi350965/weight-of-the-rust"
+      title="Weight Of The Rust"
+      artist="OBI"
+    />
+</TextRight>
+
+Everyone has heard how **blazingly fast Rust ⚡** is, how every project is being rewritten in it, and how AI tools have become a major force pushing that along.
+I wrote this post to unpack why switching to another language rarely makes sense.
+
+## Motivation and Background
+I'm a developer who has worked with Java and Minecraft optimization since **2016**.
+I've tackled plenty of challenges over the years, including some deeply troubled codebases.
+Back then Rust wasn't mainstream yet, so we had to solve things with what we had.
+Honestly, I don't like the idea of porting Minecraft to another language.
+Why? 
+Why hasn't Minecraft been officially rewritten in Rust yet?
+Let's dig in.
+
+## Porting to Another Language
+Jokes aside, deciding to migrate a codebase to a different language is a last-resort move.
+Minecraft's bottlenecks aren't about the language—they stem from architectural decisions and how carefully systems were designed.  
+A good example from my own experience: simply caching hashes on [CompoundTag](https://mcsrc.dev/2/26.3/net/minecraft/nbt/CompoundTag#L410) in the VimeMC project cut a huge share of allocations and CPU load.
+
+On top of that, the cost of migrating, learning a new ecosystem, and debugging brand-new code outweighs common sense.
+
+## The AI Trap
+AI assistants smooth over some of the friction around Rust's borrow checker and boilerplate, yet they don't erase the real cost of a rewrite.
+
+### A Staged Argument
+**Ivan** — "We decided to rewrite the project in Rust, look at these projected gains. Granted, it'll cost X."  
+**Pyotr Semyonovich** — "Why did you choose a rewrite over optimizing what we have? All our engineers know Java."  
+**Ivan** — "Java is slow—just look at these pause-time charts[^1]!"  
+**Pyotr Semyonovich** — "I see long pauses. How does eliminating them solve our bottleneck, and why would another language be required?"  
+**Sashok** — "Actually, those pauses are a deliberate trade-off to drain queues faster. We can swap to a different garbage collector that avoids pauses like that."  
+**Pyotr Semyonovich** — "Settled—rewrite rejected. New task: optimize the existing application."
+
+What happened here? 
+Why did Sashok ruin the fun? 
+Because that's reality. 
+With so many teams rewriting projects in Rust out of passion rather than necessity, it snowballed into an industry trend.
+AI makes this worse by subtly altering architecture and patterns on the fly during a rewrite while the developer stops paying attention to what's actually changing.
+
+### Bun
+Even a well-known project like **Bun** stepped on that rake[^2].
+Sure, AI got remarkably close to completing the rewrite almost autonomously.
+Yet there were plenty of caveats:
+1. Setting up an extraordinarily complex workflow, rules, and test harnesses.
+2. The effort took **11 days**, which is awfully slow relative to the resources poured in.
+3. Project cost wasn't even a constraint because budgets were effectively unlimited[^3].
+4. Even with all that investment, countless hard-won fixes, edge-case solutions, and features were lost.
+5. The result still wasn't production-ready—it took months of additional polishing afterward.
+
+## Wrapping Up
+It becomes clear why Microsoft knows how complex their codebase is—and seeing how severe the bugs in Bedrock still are[^4], there's little room for doubt.
+The issue isn't the migration target; it's how hard it is to faithfully reproduce a complex system.
+Meanwhile, countless community efforts to rewrite Minecraft in Rust keep hitting the same wall and getting stuck in perpetual <Tooltip term="Work In Progress">WIP</Tooltip> purgatory.
+
+And I haven't even touched on losing an entire ecosystem of mods and plugins just because someone picked a different language.  
+Sure, everyone could migrate too—but that's a whole different story.
+
+Thanks for reading!
+
+---
+[^1]: [Why Discord is switching from Go to Rust](https://discord.com/blog/why-discord-is-switching-from-go-to-rust)
+[^2]: [Rewriting Bun in Rust](https://bun.com/blog/bun-in-rust)
+[^3]: [Bun is joining Anthropic](https://bun.com/blog/bun-joins-anthropic)
+[^4]: [Reddit — Have you run into random instant-death bugs?](https://reddit.com/r/MinecraftMemes/comments/1e3yvc2/bedrock_players_do_any_of_you_actually_experience/)

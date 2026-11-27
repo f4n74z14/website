@@ -16,9 +16,8 @@ import {
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { rehypeTableWrapper } from "./src/utils/rehypeTableWrapper";
-import {
-  rehypeInlineToc,
-} from "./src/utils/rehypeInlineToc";
+import { rehypeInlineToc } from "./src/utils/rehypeInlineToc";
+import { DEFAULT_LOCALE, LOCALES } from "./src/i18n/locales";
 import config from "./astro-paper.config";
 
 export default defineConfig({
@@ -31,8 +30,8 @@ export default defineConfig({
     }),
   ],
   i18n: {
-    locales: ["en", "ru"],
-    defaultLocale: "ru",
+    locales: [...LOCALES],
+    defaultLocale: DEFAULT_LOCALE,
     routing: {
       prefixDefaultLocale: false,
     },

@@ -2,6 +2,14 @@
 import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  resolveLocale,
+  useTranslations,
+  type Locale,
+} from "@/i18n";
+import { switchLocalePath } from "@/utils/localeUrl";
 import config from "@/config";
 import "@/styles/global.css";
 import CustomHead from "@/custom/Head.astro";
@@ -13,25 +21,41 @@ type Props = {
   ogImage?: string;
   ogType?: "website" | "article";
   canonicalURL?: string;
+  localeAlternates?: Partial<Record<Locale, string>>;
 };
 
 const { site } = config;
+const locale = resolveLocale(Astro.currentLocale ?? site.lang);
+const t = useTranslations(locale);
 
 const {
-  title = site.title,
-  description = site.description,
-  ogImage = resolveDefaultOgImagePath(config),
+  title = t.site.title,
+  description = t.site.description,
+  ogImage = resolveDefaultOgImagePath(config, locale),
   ogType = "website",
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  localeAlternates,
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
+const baseSite = Astro.site ?? Astro.url;
+const alternateLinks = LOCALES.map(loc => {
+  const path =
+    localeAlternates?.[loc] ?? switchLocalePath(Astro.url.pathname, locale, loc);
+  return {
+    locale: loc,
+    href: new URL(path, baseSite).href,
+  };
+});
+const defaultAlt =
+  alternateLinks.find(l => l.locale === DEFAULT_LOCALE)?.href ??
+  canonicalURL;
 ---
 
 <!doctype html>
 <html
   dir={site.dir ?? "ltr"}
-  lang={Astro.currentLocale ?? site.lang}
+  lang={locale}
   class="overflow-y-scroll motion-safe:scroll-smooth"
 >
   <head>
@@ -39,6 +63,12 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href={getAssetPath("favicon.ico")} />
     <link rel="canonical" href={canonicalURL} />
+    {
+      alternateLinks.map(({ locale: altLocale, href }) => (
+        <link rel="alternate" hreflang={altLocale} href={href} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={defaultAlt} />
     <meta name="generator" content={Astro.generator} />
 
     <!-- Primary meta -->
@@ -50,7 +80,8 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
-    <meta property="og:site_name" content={site.title} />
+    <meta property="og:locale" content={locale} />
+    <meta property="og:site_name" content={t.site.title} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />

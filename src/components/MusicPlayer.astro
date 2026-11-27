@@ -1,6 +1,14 @@
+---
+import config from "@/config";
+import { useTranslations } from "@/i18n";
+
+const t = useTranslations(Astro.currentLocale ?? config.site.lang);
+---
+
 <div
   id="music-player"
   data-open="false"
+  data-i18n={JSON.stringify(t.music)}
   transition:persist="music-player"
   class="fixed inset-x-0 bottom-0 z-50"
   aria-hidden="true"
@@ -15,7 +23,7 @@
         id="music-play"
         type="button"
         disabled
-        aria-label="Play"
+        aria-label={t.music.play}
         class="music-icon-button"
       >
         <svg
@@ -64,7 +72,7 @@
           max="100"
           value="0"
           disabled
-          aria-label="Playback position"
+          aria-label={t.music.playbackPosition}
           class="music-range"
         />
 
@@ -72,7 +80,7 @@
           id="music-loading"
           class="pointer-events-none absolute inset-0 z-10 hidden items-center justify-center"
           role="status"
-          aria-label="Loading audio"
+          aria-label={t.music.loading}
         >
           <svg
             class="size-3.5 animate-spin text-accent"
@@ -111,7 +119,7 @@
         min="0"
         max="1"
         step="0.01"
-        aria-label="Volume"
+        aria-label={t.music.volume}
         class="music-range"
       />
 
@@ -120,8 +128,8 @@
         href="https://audius.co/"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Open track on Audius"
-        title="Open on Audius"
+        aria-label={t.music.openOnAudius}
+        title={t.music.openOnAudius}
         class="music-icon-button"
       >
         <svg
@@ -144,8 +152,8 @@
       <button
         id="music-close"
         type="button"
-        aria-label="Close player"
-        title="Close player"
+        aria-label={t.music.close}
+        title={t.music.close}
         class="music-icon-button"
       >
         <svg

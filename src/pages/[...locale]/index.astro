@@ -6,15 +6,23 @@ import Layout from "@/layouts/Layout.astro";
 import { Header, Footer, Card, LinkButton } from "@/components";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getAssetPath } from "@/utils/withBase";
-import { useTranslations } from "@/i18n";
+import {
+  getContentLocale,
+  getStaticLocalePaths,
+  resolveLocale,
+  useTranslations,
+} from "@/i18n";
 import config from "@/config";
 
-const { posts: postsConfig } = config;
+export const getStaticPaths = () => getStaticLocalePaths();
 
-const locale = Astro.currentLocale ?? config.site.lang;
+const { posts: postsConfig } = config;
+const locale = resolveLocale(Astro.currentLocale ?? config.site.lang);
 const t = useTranslations(locale);
 
-const posts = await getCollection("posts");
+const posts = (await getCollection("posts")).filter(
+  post => getContentLocale(post) === locale
+);
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
@@ -31,19 +39,11 @@ const homePath = getRelativeLocaleUrl(locale, "") || getAssetPath("");
   >
     <section id="hero" class="border-border border-b pt-8 pb-6">
       <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
-        Добро пожаловать!
-      </h1>{" "}
-      <p>Рад, что вы заглянули сюда.</p>
-      <br />
-      <p>
-        Данный блог &mdash; это просто небольшой личный проект. Сюда
-        выкладываются всякие интересные мысли и записки, которыми я хочу
-        поделиться с другими, и при этом не потерять.
-      </p>
-      <br />
-      <p>
-        Настроение этого места можно описать как вечерние посиделки за столом.
-      </p>
+        {t.home.heroTitle}
+      </h1>
+      <div class="space-y-4">
+        {t.home.heroParagraphs.map(paragraph => <p>{paragraph}</p>)}
+      </div>
     </section>
 
     {featuredPosts.length > 0 && (

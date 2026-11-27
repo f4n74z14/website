@@ -2,10 +2,15 @@ import { isSafeInternalPath } from "@/utils/withBase";
 
 const BACK_URL_KEY = "backUrl";
 
+function getBackUrlKey(): string {
+  const lang = document.documentElement.lang.trim();
+  return lang ? `${BACK_URL_KEY}:${lang}` : BACK_URL_KEY;
+}
+
 export function setBackUrl(url: string): void {
   if (!isSafeInternalPath(url)) return;
   try {
-    sessionStorage.setItem(BACK_URL_KEY, url);
+    sessionStorage.setItem(getBackUrlKey(), url);
   } catch {
     // Storage may be unavailable.
   }
@@ -22,7 +27,7 @@ function syncBackNavigation(): void {
   if (!backButton) return;
 
   try {
-    const stored = sessionStorage.getItem(BACK_URL_KEY);
+    const stored = sessionStorage.getItem(getBackUrlKey());
     if (isSafeInternalPath(stored)) {
       backButton.href = stored;
     }

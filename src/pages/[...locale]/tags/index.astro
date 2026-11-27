@@ -3,18 +3,28 @@ import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/PageLayout.astro";
 import { Tag } from "@/components";
 import { getUniqueTags } from "@/utils/getUniqueTags";
-import { useTranslations } from "@/i18n";
+import {
+  getContentLocale,
+  getStaticLocalePaths,
+  resolveLocale,
+  useTranslations,
+} from "@/i18n";
 import config from "@/config";
 
-const posts = await getCollection("posts", ({ data }) => !data.draft);
-const tags = getUniqueTags(posts);
+export const getStaticPaths = () => getStaticLocalePaths();
 
-const locale = Astro.currentLocale ?? config.site.lang;
+const locale = resolveLocale(Astro.currentLocale ?? config.site.lang);
 const t = useTranslations(locale);
+
+const posts = await getCollection(
+  "posts",
+  post => !post.data.draft && getContentLocale(post) === locale
+);
+const tags = getUniqueTags(posts);
 ---
 
 <PageLayout
-  title={`${t.pages.tagsTitle} | ${config.site.title}`}
+  title={`${t.pages.tagsTitle} | ${t.site.title}`}
   pageTitle={t.pages.tagsTitle}
   pageDesc={t.pages.tagsDesc}
 >

@@ -1,27 +1,40 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { BLOG_PATH } from "@/content.config";
+import { splitLocaleFromId } from "@/i18n";
 import { slugifyStr } from "./slugify";
 import config from "@/config";
 
-function getPostPathSegments(filePath: string | undefined): string[] {
-  return (
+function stripLocaleSegment(segments: string[], locale: string): string[] {
+  return segments[0] === locale ? segments.slice(1) : segments;
+}
+
+function getPostPathSegments(
+  id: string,
+  filePath: string | undefined
+): string[] {
+  const { locale } = splitLocaleFromId(id);
+  const rawSegments =
     filePath
       ?.replace(BLOG_PATH, "")
       .split("/")
-      .filter(path => path !== "")
-      .filter(path => !path.startsWith("_"))
-      .slice(0, -1)
-      .map(segment => slugifyStr(segment)) ?? []
-  );
+      .filter(path => path !== "") ?? [];
+  return stripLocaleSegment(rawSegments, locale)
+    .filter(path => !path.startsWith("_"))
+    .slice(0, -1)
+    .map(segment => slugifyStr(segment));
 }
 
 function getIdSlug(id: string): string {
-  const postId = id.split("/");
-  return postId.length > 0 ? String(postId[postId.length - 1]) : id;
+  const { slug } = splitLocaleFromId(id);
+  const postId = slug.split("/");
+  return postId.length > 0 ? String(postId[postId.length - 1]) : slug;
 }
 
-function getPostSlugPath(id: string, filePath: string | undefined): string {
-  const pathSegments = getPostPathSegments(filePath);
+export function getPostSlugPath(
+  id: string,
+  filePath: string | undefined
+): string {
+  const pathSegments = getPostPathSegments(id, filePath);
   const slug = getIdSlug(id);
   return pathSegments.length > 0
     ? [...pathSegments, slug].join("/")

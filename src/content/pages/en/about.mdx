@@ -1,0 +1,76 @@
+---
+title: "About"
+description: "About me"
+---
+import { Image } from "astro:assets";
+import { MusicLink, TextRight } from "@/components";
+import maskot from "@/assets/images/maskot.webp";
+
+<Image 
+  src={maskot} 
+  alt="Mascot" 
+  height="480"
+  width="480"
+  loading="eager" 
+  fetchpriority="high" 
+  style="border: none"
+/>
+
+<TextRight>
+    <MusicLink
+      href="https://audius.co/DeanEvenson/touching-infinity"
+      title="Touching Infinity"
+      artist="Dean Evenson"
+    />
+</TextRight>
+
+```java
+{
+    // [!code --:1]
+    int currentYear = LocalDate.now().getYear()
+    // [!code ++:1]
+    int currentYear = LocalDate.now().getYear();
+    String name;
+    int age;
+    Lang lang;
+    Genre favGameGenre;
+
+    private void fillGeneralInfo() {
+        name = "Andrey";
+        age = Math.abs(2000 - currentYear); // TODO: find cause of negative value
+        lang = Lang.JAVA; // Since 2016
+        favGameGenre = Genre.VISUAL_NOVEL; // And other story-rich genres
+    }
+}
+```
+
+Of course, my experience isn't limited to just one language, though it remains my favorite.  
+For example, this blog brings together Astro, JS, CSS, HTML, design, writing, git, and Cloudflare Pages.  
+The source code is completely open on [GitHub](https://github.com/f4n74z14/website).
+
+My favorite color scheme is [Nord](https://www.nordtheme.com/), and the best monospace font is [PragmataPro Mono Liga](https://fsd.it/shop/fonts/pragmatapro/).  
+I prefer working without font smoothing, going for pixel-sharp glyphs instead.
+
+My approach is pragmatic, without fanaticism. My PC has served me since 2019, and its specs are:
+- Inno3D GTX 1660 Ti;
+- Intel i5 9400F;
+- 32 GB RAM;
+- Seasonic SSP 650W;
+
+I believe that if a game or program won't run on hardware like this, then I'm simply not the target audience for that product.  
+System requirements aren't just words—they're a guest list.  
+And my name isn't on it.
+
+I consider myself a humanist. I believe there is no good or bad outside my own mind: I'm the one coloring everything around me.  
+That's where my neutrality comes from: not being let into a program doesn't mean the program is bad.  
+And a program not being bad doesn't mean it's meant for me.
+
+I enjoy experimenting. Whenever a new technology comes along, I'm happy to test it out—whether it's [local models](https://www.liquid.ai/) running on my GPU, or [voice input](https://handy.computer/) replacing the keyboard.
+
+I prefer repairing rather than replacing, at least up until fixing costs more than buying new. For example, I picked up an [Ardor Gaming Ulta](https://ardor-gaming.com/product/29431034/mysh-besprovodnaya-provodnaya-ardor-gaming-ulta/) mouse  
+because it tackles the wearing-microswitches issue head-on: hot-swappable sockets and 10 spare switches in the box.  
+It's unlikely to go out of style—sure, it's not the flashiest thing now that magnetic switches exist, so let's see which one lasts longer.
+
+I'm convinced that someone, someday will find this interesting to read. I'm not chasing a single narrow blog topic; I just want to share things and preserve what I've built and learned.
+
+Thanks for stopping by.

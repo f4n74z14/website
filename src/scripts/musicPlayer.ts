@@ -38,11 +38,48 @@ function getSavedVolume(): number {
   }
 }
 
+type MusicStrings = {
+  play: string;
+  pause: string;
+  retry: string;
+  serverUnavailable: string;
+  playbackPosition: string;
+  loading: string;
+  volume: string;
+  openOnAudius: string;
+  close: string;
+};
+
+const DEFAULT_MUSIC_STRINGS: MusicStrings = {
+  play: "Play",
+  pause: "Pause",
+  retry: "Retry audio",
+  serverUnavailable: "Audio server unavailable — click to retry",
+  playbackPosition: "Playback position",
+  loading: "Loading audio",
+  volume: "Volume",
+  openOnAudius: "Open on Audius",
+  close: "Close player",
+};
+
+function readMusicStrings(player: HTMLElement): MusicStrings {
+  const raw = player.dataset.i18n;
+  if (!raw) return DEFAULT_MUSIC_STRINGS;
+  try {
+    return {
+      ...DEFAULT_MUSIC_STRINGS,
+      ...(JSON.parse(raw) as Partial<MusicStrings>),
+    };
+  } catch {
+    return DEFAULT_MUSIC_STRINGS;
+  }
+}
+
 type MusicPlayerController = {
   player: HTMLElement;
   audio: HTMLAudioElement;
   selectTrack: (link: HTMLElement) => Promise<void>;
-  beforeSwap: () => void;
+  beforeSwap: (newDocument?: Document) => void;
   fadeOutAndPause: (duration?: number) => Promise<void>;
 };
 
@@ -121,6 +158,18 @@ function createMusicPlayer(
     player.dataset.open = "false";
   };
 
+  let strings = readMusicStrings(player);
+
+  const applyStaticLabels = () => {
+    progress.setAttribute("aria-label", strings.playbackPosition);
+    volume.setAttribute("aria-label", strings.volume);
+    loadingIndicator?.setAttribute("aria-label", strings.loading);
+    audiusLink.setAttribute("aria-label", strings.openOnAudius);
+    audiusLink.title = strings.openOnAudius;
+    closeButton.setAttribute("aria-label", strings.close);
+    closeButton.title = strings.close;
+  };
+
   const updatePlayerUI = () => {
     const isPlaying = !audio.paused && !audio.ended;
     const isLoading = isResolvingTrack || isBuffering;
@@ -133,11 +182,9 @@ function createMusicPlayer(
       isResolvingTrack || (!hasError && !audio.hasAttribute("src"));
     playButton.setAttribute(
       "aria-label",
-      hasError ? "Retry audio" : isPlaying ? "Pause" : "Play"
+      hasError ? strings.retry : isPlaying ? strings.pause : strings.play
     );
-    playButton.title = hasError
-      ? "Audio server unavailable — click to retry"
-      : "";
+    playButton.title = hasError ? strings.serverUnavailable : "";
     playButton.setAttribute("aria-busy", String(isLoading));
 
     if (loadingIndicator) {
@@ -517,7 +564,7 @@ function createMusicPlayer(
     hidePlayer();
   });
 
-  function beforeSwap() {
+  function beforeSwap(newDocument?: Document) {
     requestId++;
     resolveController?.abort();
     resolveController = null;
@@ -530,12 +577,21 @@ function createMusicPlayer(
     if (audio.readyState > 0 && Number.isFinite(audio.duration)) {
       audio.currentTime = 0;
     }
+
+    const nextI18n = newDocument?.getElementById("music-player")?.dataset.i18n;
+    if (nextI18n) {
+      player.dataset.i18n = nextI18n;
+      strings = readMusicStrings(player);
+      applyStaticLabels();
+    }
+
     hidePlayer();
     updateProgress();
     updatePlayerUI();
   }
 
   progress.disabled = true;
+  applyStaticLabels();
   updatePlayerUI();
 
   return { player, audio, selectTrack, beforeSwap, fadeOutAndPause };
@@ -571,8 +627,8 @@ document.addEventListener("click", (event: MouseEvent) => {
   void activePlayer.selectTrack(link);
 });
 
-document.addEventListener("astro:before-swap", () => {
-  activePlayer?.beforeSwap();
+document.addEventListener("astro:before-swap", event => {
+  activePlayer?.beforeSwap((event as { newDocument?: Document }).newDocument);
 });
 
 document.addEventListener("astro:before-preparation", event => {

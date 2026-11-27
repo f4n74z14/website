@@ -1,4 +1,8 @@
 export interface UIStrings {
+  site: {
+    title: string;
+    description: string;
+  };
   nav: {
     home: string;
     posts: string;
@@ -30,10 +34,16 @@ export interface UIStrings {
     page: string;
   };
   home: {
+    heroTitle: string;
+    heroParagraphs: string[];
     socialLinks: string;
     featured: string;
     recentPosts: string;
     allPosts: string;
+  };
+  socials: {
+    email: string;
+    profile: string;
   };
   footer: {
     copyright: string;
@@ -54,11 +64,27 @@ export interface UIStrings {
 
     searchTitle: string;
     searchDesc: string;
+    searchDevWarningTitle: string;
+    searchDevWarningBody: string;
+  };
+  music: {
+    play: string;
+    pause: string;
+    retry: string;
+    serverUnavailable: string;
+    playbackPosition: string;
+    loading: string;
+    volume: string;
+    openOnAudius: string;
+    close: string;
   };
   a11y: {
     skipToContent: string;
     /** Optional until v8, so older locale files still type-check. */
     skipTableOfContents?: string;
+    breadcrumb: string;
+    pagination: string;
+    switchLanguage: string;
     openMenu: string;
     closeMenu: string;
     toggleTheme: string;
@@ -78,6 +104,7 @@ export interface UIStrings {
   notFound: {
     title: string;
     message: string;
+    imageAlt: string;
     goHome: string;
   };
 }

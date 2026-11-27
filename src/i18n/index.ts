@@ -1,6 +1,19 @@
 import type { UIStrings } from "./types";
+import { DEFAULT_LOCALE, resolveLocale } from "./locales";
 
 export { tplStr } from "./format";
+export {
+  DEFAULT_LOCALE,
+  LOCALES,
+  LOCALE_LABELS,
+  getContentLocale,
+  getLocaleParam,
+  getStaticLocalePaths,
+  isLocale,
+  resolveLocale,
+  splitLocaleFromId,
+  type Locale,
+} from "./locales";
 
 const modules = import.meta.glob<{ default: UIStrings }>("./lang/*.ts", {
   eager: true,
@@ -15,11 +28,11 @@ for (const [path, mod] of Object.entries(modules)) {
 type ResolvedStrings = { [K in keyof UIStrings]: Required<UIStrings[K]> };
 
 /**
- * Returns UI strings for the given locale, falling back to English. Labels that
- * are optional until v8 fall back one by one.
+ * Returns UI strings for the given locale, falling back to DEFAULT_LOCALE.
  */
-export function useTranslations(locale: string = "en"): ResolvedStrings {
-  const t = translations[locale] ?? translations["en"];
+export function useTranslations(locale?: string): ResolvedStrings {
+  const resolved = resolveLocale(locale);
+  const t = translations[resolved] ?? translations[DEFAULT_LOCALE];
   return {
     ...t,
     post: { tableOfContents: "Table of contents", ...t.post },

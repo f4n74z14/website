@@ -1,7 +1,8 @@
 ---
 import Layout from "./Layout.astro";
 import { Header, Footer, MusicPlayer } from "@/components";
-import BackButton from "@/pages/posts/[...slug]/_components/BackButton.astro";
+import BackButton from "@/pages/[...locale]/posts/[...slug]/_components/BackButton.astro";
+import { resolveLocale, useTranslations, type Locale } from "@/i18n";
 import config from "@/config";
 
 type Props = {
@@ -9,19 +10,29 @@ type Props = {
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  localeAlternates?: Partial<Record<Locale, string>>;
   pubDatetime?: Date;
   modDatetime?: Date | null;
 };
 
 const { site } = config;
+const locale = resolveLocale(Astro.currentLocale ?? site.lang);
+const t = useTranslations(locale);
 
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime } =
-  Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  localeAlternates,
+  pubDatetime,
+  modDatetime,
+} = Astro.props;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  headline: title ?? site.title,
+  headline: title ?? t.site.title,
   image: ogImage,
   ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
@@ -42,7 +53,14 @@ const structuredDataJson = JSON.stringify(structuredData).replace(
 );
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL} ogType="article">
+<Layout
+  {title}
+  {description}
+  {ogImage}
+  {canonicalURL}
+  {localeAlternates}
+  ogType="article"
+>
   <Fragment slot="head">
     {
       pubDatetime && (
@@ -72,7 +90,7 @@ const structuredDataJson = JSON.stringify(structuredData).replace(
     <div class="progress-bar bg-accent h-1 w-0" id="myBar"></div>
   </div>
 
-  <Header />
+  <Header {localeAlternates} />
 
   <BackButton />
 

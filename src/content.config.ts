@@ -26,6 +26,7 @@ const posts = defineCollection({
         .string()
         .optional()
         .transform(tz => tz || undefined),
+      lang: z.enum(["ru", "en"]).optional(),
     }),
 });
 
@@ -37,6 +38,7 @@ const pages = defineCollection({
     ogImage: z.string().optional(),
     canonicalURL: z.string().optional(),
     musicPlayer: z.boolean().optional(),
+    lang: z.enum(["ru", "en"]).optional(),
   }),
 });
 

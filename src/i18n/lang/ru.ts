@@ -1,6 +1,10 @@
 import type { UIStrings } from "../types";
 
 export default {
+  site: {
+    title: "Предел фантазии",
+    description: "Небольшой блог небольшого человека",
+  },
   nav: {
     home: "Главная",
     posts: "Посты",
@@ -11,7 +15,7 @@ export default {
     search: "Поиск",
   },
   post: {
-    publishedAt: "Омубликовано",
+    publishedAt: "Опубликовано",
     updatedAt: "Обновлено",
     sharePostIntro: "Поделиться:",
     sharePostOn: "Поделиться на {{platform}}",
@@ -31,10 +35,20 @@ export default {
     page: "Стр.",
   },
   home: {
+    heroTitle: "Добро пожаловать!",
+    heroParagraphs: [
+      "Рад, что вы заглянули сюда.",
+      "Данный блог — это просто небольшой личный проект. Сюда выкладываются всякие интересные мысли и записки, которыми я хочу поделиться с другими, и при этом не потерять.",
+      "Настроение этого места можно описать как вечерние посиделки за столом.",
+    ],
     socialLinks: "Ссылки на соц. сети",
     featured: "Горячее",
     recentPosts: "Недавнее",
     allPosts: "Все посты",
+  },
+  socials: {
+    email: "Написать на {{site}}",
+    profile: "{{site}} в {{platform}}",
   },
   footer: {
     copyright: "Copyright",
@@ -42,7 +56,7 @@ export default {
   },
   pages: {
     tagTitle: "Тег",
-    tagDesc: "Все посты с тегом.",
+    tagDesc: "Все посты с тегом",
 
     tagsTitle: "Теги",
     tagsDesc: "Все теги, используемые в постах.",
@@ -55,10 +69,27 @@ export default {
 
     searchTitle: "Поиск",
     searchDesc: "Поиск по всем постам ...",
+    searchDevWarningTitle: "Режим разработки!",
+    searchDevWarningBody:
+      "Чтобы увидеть результаты поиска при разработке, сначала соберите проект хотя бы один раз:",
+  },
+  music: {
+    play: "Воспроизвести",
+    pause: "Пауза",
+    retry: "Повторить попытку",
+    serverUnavailable: "Аудиосервер недоступен — нажмите, чтобы повторить",
+    playbackPosition: "Позиция воспроизведения",
+    loading: "Загрузка аудио",
+    volume: "Громкость",
+    openOnAudius: "Открыть на Audius",
+    close: "Закрыть плеер",
   },
   a11y: {
     skipToContent: "Перейти к содержанию",
     skipTableOfContents: "Пропустить оглавление",
+    breadcrumb: "Навигация",
+    pagination: "Навигация по страницам",
+    switchLanguage: "Сменить язык",
     openMenu: "Открыть меню",
     closeMenu: "Закрыть меню",
     toggleTheme: "Переключить тему",
@@ -78,6 +109,7 @@ export default {
   notFound: {
     title: "404 Не найдено",
     message: "Страница не найдена",
+    imageAlt: "Пингвин",
     goHome: "На главную",
   },
 } satisfies UIStrings;
