@@ -5,6 +5,7 @@ type PostStrings = LightboxStrings & {
   copied: string;
   zoomImageGeneral: string;
   linkToSection: string;
+  footnoteLabel: string;
 };
 
 const DEFAULT_STRINGS: PostStrings = {
@@ -16,6 +17,7 @@ const DEFAULT_STRINGS: PostStrings = {
   imagePreview: "Image preview: {{alt}}",
   closeImagePreview: "Close preview",
   linkToSection: "Link to {{title}}",
+  footnoteLabel: "Footnotes",
 };
 
 function readPostStrings(article: HTMLElement): PostStrings {
@@ -28,10 +30,20 @@ function readPostStrings(article: HTMLElement): PostStrings {
   }
 }
 
-function addHeadingLinks(article: HTMLElement, linkTemplate: string): void {
+function addHeadingLinks(
+  article: HTMLElement,
+  linkTemplate: string,
+  footnoteLabel: string
+): void {
   const headings = article.querySelectorAll<HTMLElement>("h2, h3, h4, h5, h6");
   for (const heading of headings) {
     if (!heading.id || heading.querySelector(".heading-link")) continue;
+    if (
+      heading.id === "footnote-label" &&
+      heading.firstChild?.nodeType === Node.TEXT_NODE
+    ) {
+      heading.firstChild.textContent = footnoteLabel;
+    }
     heading.classList.add("group");
 
     const link = document.createElement("a");
@@ -115,7 +127,7 @@ function initPostPage(): void {
   if (!article) return;
 
   const strings = readPostStrings(article);
-  addHeadingLinks(article, strings.linkToSection);
+  addHeadingLinks(article, strings.linkToSection, strings.footnoteLabel);
   attachCopyButtons(article, strings.copy, strings.copied);
   const cleanupLightbox = initLightbox(article, strings);
 

@@ -29,3 +29,19 @@ test("buildTocTree nests h3 under h2 and handles skipped levels gracefully", () 
   assert.equal(tree[0].children[0].slug, "sub");
   assert.equal(tree[1].slug, "end");
 });
+
+test("buildTocTree applies labelOverrides safely by heading slug", () => {
+  const tree = buildTocTree(
+    [
+      { depth: 2, slug: "intro", text: "Intro" },
+      { depth: 2, slug: "footnote-label", text: "Footnotes" },
+      { depth: 2, slug: "toString", text: "Methods" },
+    ],
+    3,
+    { "footnote-label": "Сноски" }
+  );
+
+  assert.equal(tree[0].text, "Intro");
+  assert.equal(tree[1].text, "Сноски");
+  assert.equal(tree[2].text, "Methods");
+});

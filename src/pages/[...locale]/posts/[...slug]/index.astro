@@ -116,7 +116,7 @@ const {
 const { Content, headings } = await render(post);
 const tocItems =
   config.features.toc && !hideToc && hasToc(headings)
-    ? buildTocTree(headings)
+    ? buildTocTree(headings, 3, { "footnote-label": t.post.footnoteLabel })
     : [];
 
 let ogImageUrl: string | undefined;
@@ -147,6 +147,7 @@ const clientStrings = {
   imagePreview: tplStr(t.a11y.imagePreview, { alt: "{{alt}}" }),
   closeImagePreview: t.a11y.closeImagePreview,
   linkToSection: tplStr(t.a11y.linkToSection, { title: "{{title}}" }),
+  footnoteLabel: t.post.footnoteLabel,
 };
 ---
 

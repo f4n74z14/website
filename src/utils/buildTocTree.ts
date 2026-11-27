@@ -12,13 +12,21 @@ type Heading = { depth: number; slug: string; text: string };
  * under the closest shallower heading, and a post that starts at h3 puts it
  * at the top level, so no heading order can break the build.
  */
-export function buildTocTree(headings: Heading[], maxDepth = 3): TocItem[] {
+export function buildTocTree(
+  headings: Heading[],
+  maxDepth = 3,
+  labelOverrides?: Record<string, string>
+): TocItem[] {
   const root: TocItem[] = [];
   const stack: TocItem[] = [];
 
   for (const { depth, slug, text } of headings) {
     if (depth < 2 || depth > maxDepth) continue;
-    const item: TocItem = { depth, slug, text, children: [] };
+    const label =
+      labelOverrides && Object.hasOwn(labelOverrides, slug)
+        ? labelOverrides[slug]
+        : text;
+    const item: TocItem = { depth, slug, text: label, children: [] };
     while (stack.length && stack[stack.length - 1].depth >= depth) stack.pop();
     (stack[stack.length - 1]?.children ?? root).push(item);
     stack.push(item);
