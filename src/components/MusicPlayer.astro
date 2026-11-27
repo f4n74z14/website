@@ -60,7 +60,10 @@ const t = useTranslations(Astro.currentLocale ?? config.site.lang);
           role="status"
           aria-label={t.music.loading}
         >
-          <IconSpinner class="size-3.5 animate-spin text-accent" aria-hidden="true" />
+          <IconSpinner
+            class="size-3.5 animate-spin text-accent motion-reduce:animate-none"
+            aria-hidden="true"
+          />
         </span>
       </div>
 

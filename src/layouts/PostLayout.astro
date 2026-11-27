@@ -87,7 +87,11 @@ const structuredDataJson = JSON.stringify(structuredData).replace(
   </Fragment>
 
   <div class="progress-container bg-background fixed top-0 z-10 h-1 w-full">
-    <div class="progress-bar bg-accent h-1 w-0" id="myBar"></div>
+    <div
+      class="progress-bar bg-accent h-1 w-full origin-left scale-x-0"
+      id="myBar"
+    >
+    </div>
   </div>
 
   <Header {localeAlternates} />

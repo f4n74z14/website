@@ -5,6 +5,12 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-ui: 160ms;
+  --duration-enter: 240ms;
+}
+
 @layer base {
   * {
     @apply border-border outline-accent/75;
@@ -16,9 +22,60 @@
   #main-content {
     @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
   }
+  a,
+  button {
+    transition:
+      color var(--duration-ui) var(--ease-out-expo),
+      opacity var(--duration-ui) var(--ease-out-expo),
+      border-color var(--duration-ui) var(--ease-out-expo),
+      background-color var(--duration-ui) var(--ease-out-expo),
+      transform var(--duration-ui) var(--ease-out-expo);
+  }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #main-content {
+    animation: page-enter var(--duration-enter) var(--ease-out-expo) both;
+  }
+
+  ::view-transition-old(root) {
+    animation: 150ms ease-in both fade-out;
+  }
+  ::view-transition-new(root) {
+    animation: 220ms var(--ease-out-expo) both fade-in;
   }
 }
 
@@ -114,13 +171,37 @@ abbr.custom-tooltip::after {
 
   opacity: 0;
   visibility: hidden;
+  transform: translateY(4px) scale(0.97);
   pointer-events: none;
 
-  transition: opacity 0.15s ease, visibility 0.15s ease;
+  transition:
+    opacity var(--duration-ui) var(--ease-out-expo),
+    transform var(--duration-ui) var(--ease-out-expo),
+    visibility var(--duration-ui) linear;
 }
 
 abbr.custom-tooltip:hover::after,
 abbr.custom-tooltip:focus-visible::after {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  a,
+  button,
+  abbr.custom-tooltip::after {
+    transition: none !important;
+  }
+  abbr.custom-tooltip::after {
+    transform: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

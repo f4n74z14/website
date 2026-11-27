@@ -84,7 +84,7 @@ function attachCopyButtons(
 
     const copyButton = document.createElement("button");
     copyButton.type = "button";
-    copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
+    copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium transition-transform duration-150 active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100`;
     copyButton.textContent = copyLabel;
 
     codeBlock.setAttribute("tabindex", "0");
@@ -104,7 +104,8 @@ function attachCopyButtons(
 }
 
 function scrollToTop(): void {
-  window.scrollTo({ left: 0, top: 0 });
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ left: 0, top: 0, behavior: reduced ? "auto" : "smooth" });
 }
 
 function centerActiveTocItem(list: HTMLElement | null, smooth: boolean): void {
@@ -168,7 +169,7 @@ function initPostPage(): void {
     const pct = `${ratio * 100}%`;
 
     if (progressBar) {
-      progressBar.style.width = pct;
+      progressBar.style.transform = `scaleX(${ratio})`;
     }
 
     if (fab && fabProgress) {

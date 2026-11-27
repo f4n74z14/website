@@ -54,13 +54,13 @@ const withToc = items.length > 0;
     inset-inline-end: 1rem;
     z-index: 50;
     opacity: 0;
-    translate: 0 3.5rem;
+    translate: 0 2.5rem;
     visibility: hidden;
     transition:
-      opacity 0.5s,
-      translate 0.5s,
+      opacity 260ms cubic-bezier(0.16, 1, 0.3, 1),
+      translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
       inset-block-end 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      visibility 0.5s;
+      visibility 260ms linear;
   }
   .post-fab[data-visible] {
     opacity: 1;
@@ -81,6 +81,13 @@ const withToc = items.length > 0;
     box-shadow:
       0 10px 15px -3px rgb(0 0 0 / 0.15),
       0 4px 6px -4px rgb(0 0 0 / 0.15);
+    transition:
+      transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .post-fab-btn:active {
+    transform: scale(0.94);
   }
   /* The ring is the scroll progress: a 4px accent arc over a 2px track, showing
      through the button's transparent border. Accent and track have similar
@@ -104,6 +111,10 @@ const withToc = items.length > 0;
   @media (hover: hover) {
     .post-fab-btn:hover {
       color: var(--color-accent);
+      transform: translateY(-2px);
+    }
+    .post-fab-btn:hover:active {
+      transform: scale(0.94);
     }
   }
   /* Dashed, so it doesn't read as a second progress ring. The offset clears the
@@ -145,9 +156,25 @@ const withToc = items.length > 0;
     color: var(--color-foreground);
     font-size: 0.9rem;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+    transform-origin: bottom right;
+    transition:
+      opacity 180ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      display 200ms allow-discrete,
+      overlay 200ms allow-discrete;
   }
   .toc-popover:popover-open {
     display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  @starting-style {
+    .toc-popover:popover-open {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
   }
   .toc-popover nav {
     padding: 0.75rem 1.25rem 0.25rem 1rem;
@@ -163,6 +190,22 @@ const withToc = items.length > 0;
   @media (min-width: 80rem) {
     .post-fab:has([data-has-toc]):not([data-side-toc-hidden]) {
       display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-fab,
+    .post-fab-btn,
+    .toc-popover {
+      transition: none !important;
+      transform: none;
+    }
+    .post-fab {
+      translate: none;
+    }
+    .post-fab-btn:hover,
+    .post-fab-btn:active {
+      transform: none !important;
     }
   }
 
