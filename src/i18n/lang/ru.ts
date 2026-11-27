@@ -73,6 +73,15 @@ export default {
     searchDevWarningBody:
       "Чтобы увидеть результаты поиска при разработке, сначала соберите проект хотя бы один раз:",
   },
+  search: {
+    label: "Поиск по сайту",
+    clear: "Очистить",
+    searching: "Поиск по запросу «[SEARCH_TERM]»...",
+    zeroResults: "Ничего не найдено по запросу «[SEARCH_TERM]»",
+    oneResult: "Найден [COUNT] результат по запросу «[SEARCH_TERM]»",
+    manyResults: "Результатов по запросу «[SEARCH_TERM]»: [COUNT]",
+    loadMore: "Показать ещё",
+  },
   music: {
     play: "Воспроизвести",
     pause: "Пауза",

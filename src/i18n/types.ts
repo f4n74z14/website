@@ -67,6 +67,15 @@ export interface UIStrings {
     searchDevWarningTitle: string;
     searchDevWarningBody: string;
   };
+  search: {
+    label: string;
+    clear: string;
+    searching: string;
+    zeroResults: string;
+    oneResult: string;
+    manyResults: string;
+    loadMore: string;
+  };
   music: {
     play: string;
     pause: string;

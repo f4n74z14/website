@@ -26,6 +26,16 @@ const backUrl = config.features.showBackButton
 
 const pagefindBundlePath = getAssetPath("pagefind/");
 const t = useTranslations(locale);
+const pagefindTranslations = {
+  placeholder: t.a11y.searchPlaceholder,
+  search_label: t.search.label,
+  clear_search: t.search.clear,
+  searching: t.search.searching,
+  zero_results: t.search.zeroResults,
+  one_result: t.search.oneResult,
+  many_results: t.search.manyResults,
+  load_more: t.search.loadMore,
+};
 ---
 
 <PageLayout
@@ -38,7 +48,7 @@ const t = useTranslations(locale);
     transition:persist={`pagefind-search-${locale}`}
     data-backurl={backUrl}
     data-bundle-path={pagefindBundlePath}
-    data-placeholder={t.a11y.searchPlaceholder}
+    data-translations={JSON.stringify(pagefindTranslations)}
     data-dev-title={t.pages.searchDevWarningTitle}
     data-dev-body={t.pages.searchDevWarningBody}
   >
@@ -54,6 +64,15 @@ const t = useTranslations(locale);
 
     const bundlePath = pageFindSearch.dataset.bundlePath;
     if (!bundlePath) return;
+
+    let translations: Record<string, string> | undefined;
+    try {
+      if (pageFindSearch.dataset.translations) {
+        translations = JSON.parse(pageFindSearch.dataset.translations);
+      }
+    } catch {
+      translations = undefined;
+    }
 
     const params = new URLSearchParams(window.location.search);
     const onIdle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
@@ -81,9 +100,7 @@ const t = useTranslations(locale);
         bundlePath,
         showImages: false,
         showSubResults: true,
-        translations: pageFindSearch.dataset.placeholder
-          ? { placeholder: pageFindSearch.dataset.placeholder }
-          : undefined,
+        translations,
         processTerm: function (term: string) {
           params.set("q", term);
           history.replaceState(history.state, "", "?" + params.toString());

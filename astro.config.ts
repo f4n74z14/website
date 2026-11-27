@@ -17,7 +17,10 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { rehypeTableWrapper } from "./src/utils/rehypeTableWrapper";
 import { rehypeInlineToc } from "./src/utils/rehypeInlineToc";
+import { rehypeFootnoteLabel } from "./src/utils/rehypeFootnoteLabel";
 import { DEFAULT_LOCALE, LOCALES } from "./src/i18n/locales";
+import ruStrings from "./src/i18n/lang/ru";
+import enStrings from "./src/i18n/lang/en";
 import config from "./astro-paper.config";
 
 export default defineConfig({
@@ -42,6 +45,13 @@ export default defineConfig({
   markdown: {
     processor: unified({
       rehypePlugins: [
+        [
+          rehypeFootnoteLabel,
+          {
+            ru: ruStrings.post.footnoteLabel,
+            en: enStrings.post.footnoteLabel,
+          },
+        ],
         rehypeHeadingIds,
         rehypeInlineToc,
         rehypeCallouts,

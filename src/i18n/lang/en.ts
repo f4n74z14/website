@@ -73,6 +73,15 @@ export default {
     searchDevWarningBody:
       "You need to build the project at least once to see search results during development:",
   },
+  search: {
+    label: "Search this site",
+    clear: "Clear",
+    searching: "Searching for [SEARCH_TERM]...",
+    zeroResults: "No results for [SEARCH_TERM]",
+    oneResult: "[COUNT] result for [SEARCH_TERM]",
+    manyResults: "[COUNT] results for [SEARCH_TERM]",
+    loadMore: "Load more results",
+  },
   music: {
     play: "Play",
     pause: "Pause",
