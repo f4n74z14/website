@@ -81,8 +81,8 @@ export async function renderOgCard({
       background-color: ${nord[0]};
       background-size: cover;
       background-position: center;
-      width: 88%;
-      height: 80%;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -110,11 +110,13 @@ export async function renderOgCard({
         ">
           ${title}
         </div>
-        ${
-          description
-            ? `<div style="font-size: 28px; color: ${nord[4]}; line-height: 1.4;">${description}</div>`
-            : ""
-        }
+        <div style="font-size: 28px; color: ${nord[4]}; line-height: 1.4;">
+            ${
+              description
+                ? `${description}`
+                : ""
+            }
+        </div>
       </div>
 
       <div style="
@@ -126,8 +128,8 @@ export async function renderOgCard({
         font-weight: 700;
         color: ${nord[8]};
       ">
-        ${footerLeft ? `<span>${footerLeft}</span>` : ""}
-        ${footerRight ? `<span>${footerRight}</span>` : ""}
+        <span>${footerLeft ? `${footerLeft}` : ""}</span>
+        <span>${footerRight ? `${footerRight}` : ""}</span>
       </div>
     </div>
   `;
